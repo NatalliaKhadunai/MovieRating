@@ -1,0 +1,13 @@
+.rating {
+    font-size: 4rem;
+    color: #12664F;
+}
+.comment {
+    margin-top: 20px;
+}
+.container .glyphicon {
+    color: #C9C9C9;
+}
+.container .glyphicon:hover {
+    color: #FFD23F;
+}

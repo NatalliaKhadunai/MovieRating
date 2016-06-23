@@ -1,0 +1,11 @@
+table {
+    min-width: 500px;
+}
+
+.carousel-inner {
+    background-image: url("img/header-vertical.png");
+}
+
+img {
+    margin: auto;
+}
