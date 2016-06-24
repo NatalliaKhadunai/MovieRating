@@ -1,18 +1,15 @@
-<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <html>
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" href="css/img/icon-transparent.png">
     <title>Movie Rating</title>
 
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/videoProductPage.css" rel="stylesheet">
-    <link href="css/roundedImageMedium.css" rel="stylesheet">
-    <link href="css/commentStyle.css" rel="stylesheet">
     <script>
         var lastModified;
         var mark = -1;
@@ -121,8 +118,12 @@
                     divNode.className = "row";
                     divNode.style.marginTop = "20px";
                     var nodeDT = document.createElement("dt");
-                    nodeDT.innerHTML = items[i].getElementsByTagName("userLogin")[0].firstChild.nodeValue +
-                            " " + items[i].getElementsByTagName("date")[0].firstChild.nodeValue;
+                    var nodeA = document.createElement("a");
+                    var nodeAText = document.createTextNode(items[i].getElementsByTagName("userLogin")[0].firstChild.nodeValue);
+                    nodeA.setAttribute("href","/RatingServlet?requestType=userPage&userLogin=" + items[i].getElementsByTagName("userLogin")[0].firstChild.nodeValue);
+                    nodeA.appendChild(nodeAText);
+                    nodeDT.appendChild(nodeA);
+                    nodeDT.appendChild(document.createTextNode(" on " + items[i].getElementsByTagName("date")[0].firstChild.nodeValue));
                     var nodeDD = document.createElement("dd");
                     nodeDD.innerHTML = items[i].getElementsByTagName("content")[0].firstChild.nodeValue;
                     divNode.appendChild(nodeDT);
@@ -222,7 +223,8 @@
         <c:forEach items="${commentList}" var="comment" varStatus="status">
             <div class="row" style="margin-top: 20px;">
                 <dt class="commentInfo">
-                    <a href="/RatingServlet?requestType=userPage&userLogin=${comment.userLogin}">${comment.userLogin}</a> on
+                    <a href="/RatingServlet?requestType=userPage&userLogin=${comment.userLogin}">${comment.userLogin}</a>
+                    on
                     <fmt:formatDate value="${comment.date}" type="date"/>
                     <fmt:formatDate value="${comment.date}" type="time" timeStyle="short"/>
                 </dt>

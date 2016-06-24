@@ -11,7 +11,6 @@
 
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/videoProductPage.css" rel="stylesheet">
-    <link href="css/commentStyle.css" rel="stylesheet">
     <script>
         var lastModified;
         var mark = -1;
@@ -121,8 +120,12 @@
                     divNode.className = "row";
                     divNode.style.marginTop = "20px";
                     var nodeDT = document.createElement("dt");
-                    nodeDT.innerHTML = items[i].getElementsByTagName("userLogin")[0].firstChild.nodeValue +
-                            " " + items[i].getElementsByTagName("date")[0].firstChild.nodeValue;
+                    var nodeA = document.createElement("a");
+                    var nodeAText = document.createTextNode(items[i].getElementsByTagName("userLogin")[0].firstChild.nodeValue);
+                    nodeA.setAttribute("href","/RatingServlet?requestType=userPage&userLogin=" + items[i].getElementsByTagName("userLogin")[0].firstChild.nodeValue);
+                    nodeA.appendChild(nodeAText);
+                    nodeDT.appendChild(nodeA);
+                    nodeDT.appendChild(document.createTextNode(" on " + items[i].getElementsByTagName("date")[0].firstChild.nodeValue));
                     var nodeDD = document.createElement("dd");
                     nodeDD.innerHTML = items[i].getElementsByTagName("content")[0].firstChild.nodeValue;
                     divNode.appendChild(nodeDT);

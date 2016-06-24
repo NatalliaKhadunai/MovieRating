@@ -30,6 +30,7 @@ public class PutTVSeriesCommentCommand implements ActionCommand {
             String resultComment = recentComments(tvseriesName, dateLastModified);
             addPoint(login);
             response.setContentType("application/xml");
+            response.setCharacterEncoding("UTF-8");
             response.getWriter().write(resultComment);
         }
         catch (IOException e) {

@@ -31,6 +31,7 @@ public class PutFilmCommentCommand implements ActionCommand {
         addPoint(login);
 
         response.setContentType("application/xml");
+        response.setCharacterEncoding("UTF-8");
         try {
             response.getWriter().write(resultComment);
         }

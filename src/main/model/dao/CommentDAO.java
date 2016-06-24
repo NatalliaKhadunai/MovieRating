@@ -7,8 +7,12 @@ import main.model.entity.TVSeries;
 import main.controller.RequestType;
 
 import java.sql.*;
+import java.text.DateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class CommentDAO extends AbstractDAO<Comment> {
 
@@ -119,7 +123,11 @@ public class CommentDAO extends AbstractDAO<Comment> {
                 result += "<comment>";
                 result += "<userLogin>" + resultSet.getString("UserLogin") + "</userLogin>";
                 result += "<content>" + resultSet.getString("Content") + "</content>";
-                result += "<date>" + resultSet.getDate("Date") + "</date>";
+                DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.ENGLISH);
+                DateFormat tf = DateFormat.getTimeInstance(DateFormat.SHORT, Locale.ENGLISH);
+                String formattedDate = df.format(resultSet.getTimestamp("Date"));
+                String formattedTime = tf.format(resultSet.getTimestamp("Date"));
+                result += "<date>" + formattedDate + " " + formattedTime + "</date>";
                 result += "</comment>";
             }
         }
