@@ -25,11 +25,6 @@
         <location>/errorPage.jsp</location>
     </error-page>
 
-    <error-page>
-        <exception-type>main.model.exception.WrongLoginException</exception-type>
-        <location>/errorPage.jsp</location>
-    </error-page>
-
     <context-param>
         <param-name>log4j-config-location</param-name>
         <param-value>WEB-INF/log4j.properties</param-value>

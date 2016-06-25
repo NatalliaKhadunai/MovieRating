@@ -9,6 +9,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 
+/**
+ * Command to put film mark.
+ */
+
 public class PutFilmMarkCommand implements ActionCommand {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
@@ -20,22 +24,64 @@ public class PutFilmMarkCommand implements ActionCommand {
         MarkDAO markDAO = new MarkDAO();
         if (markDAO.getEntity(userLogin, film) == null) {
             markDAO.addEntity(userLogin, film, mark);
-            int numOfComments = markDAO.numberOfComments(film);
-            float differenceMark = 10 / numOfComments;
-            float avgMark = markDAO.averageMark(film);
             UserDAO userDAO = new UserDAO();
-            if (mark >= avgMark - differenceMark || mark <= avgMark + differenceMark) userDAO.addPoint(userLogin, 0.1);
-            else userDAO.addPoint(userLogin, -0.1);
+            userDAO.addPoint(userLogin, countPoint(markDAO, film, mark));
             userDAO.closeConnection();
+            markDAO.closeConnection();
+            updateFilmRating(film);
         }
-        markDAO.closeConnection();
         return page;
     }
 
+    /**
+     * Return Film entity.
+     * @param filmName value, that identifies Film entity.
+     * @return Film entity.
+     */
     private Film getFilm(String filmName) {
         FilmDAO filmDAO = new FilmDAO();
         Film film = filmDAO.getEntity(filmName);
         filmDAO.closeConnection();
         return film;
+    }
+
+    /**
+     * Update film rating.
+     * @param film entity to update.
+     */
+    private void updateFilmRating(Film film) {
+        FilmDAO filmDAO = new FilmDAO();
+        filmDAO.updateRating(film);
+        filmDAO.closeConnection();
+    }
+
+    /**
+     * Return number of users in the system.
+     * @return number of users in the system.
+     */
+    private int getNumberOfUsers() {
+        int result = 0;
+        UserDAO userDAO = new UserDAO();
+        result = userDAO.getNumOfUsers();
+        userDAO.closeConnection();
+        return result;
+    }
+
+    /**
+     * Define how many points should be user status coefficient increased or decreased.
+     * @param markDAO DAO for mark table.
+     * @param film entity, which was estimated.
+     * @param mark value.
+     * @return counted points.
+     */
+    private double countPoint(MarkDAO markDAO, Film film, int mark) {
+        double resultPoint = 0;
+        int numOfMarks = markDAO.numberOfMarks(film);
+        int numOfUsers = getNumberOfUsers();
+        double differenceMark = numOfUsers / numOfMarks;
+        double avgMark = markDAO.averageMark(film);
+        if (mark >= avgMark - differenceMark || mark <= avgMark + differenceMark) resultPoint = 0.1;
+        else resultPoint = -0.1;
+        return resultPoint;
     }
 }

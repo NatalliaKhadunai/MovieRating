@@ -14,8 +14,11 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+/**
+ * Command to put tv series comment.
+ */
+
 public class PutTVSeriesCommentCommand implements ActionCommand {
-    private final Logger logger = Logger.getLogger("CommandLogger");
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         String page = null;
@@ -28,7 +31,7 @@ public class PutTVSeriesCommentCommand implements ActionCommand {
             addComment(tvseriesName, login, content, date);
             Timestamp dateLastModified = defineDateTime(Long.valueOf(request.getParameter("lastModified")));
             String resultComment = recentComments(tvseriesName, dateLastModified);
-            addPoint(login);
+
             response.setContentType("application/xml");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().write(resultComment);
@@ -39,6 +42,11 @@ public class PutTVSeriesCommentCommand implements ActionCommand {
         return page;
     }
 
+    /**
+     * Define timestamp from milliseconds.
+     * @param timeMillis value, represents time in milliseconds.
+     * @return computed TimeStamp.
+     */
     private Timestamp defineDateTime(long timeMillis) {
         DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         Calendar calendar = Calendar.getInstance();
@@ -48,6 +56,13 @@ public class PutTVSeriesCommentCommand implements ActionCommand {
         return date;
     }
 
+    /**
+     * Add comment entity.
+     * @param tvseriesName represents tv series, on which comment was made.
+     * @param login represents user, who made comment.
+     * @param content represents content of the comment.
+     * @param date represents date, when comment was made.
+     */
     private void addComment(String tvseriesName, String login, String content, Timestamp date) {
         TVSeriesDAO tvSeriesDAO = new TVSeriesDAO();
         TVSeries tvSeries = tvSeriesDAO.getEntity(tvseriesName);
@@ -57,6 +72,12 @@ public class PutTVSeriesCommentCommand implements ActionCommand {
         commentDAO.closeConnection();
     }
 
+    /**
+     * Return comments made on tv series, that were left after specified time.
+     * @param tvseriesName represents tv series, on which comment was made.
+     * @param dateLastModified time border.
+     * @return String value in XML-format, that contains info about found comments.
+     */
     private String recentComments(String tvseriesName, Timestamp dateLastModified) {
         TVSeriesDAO tvSeriesDAO = new TVSeriesDAO();
         TVSeries tvSeries = tvSeriesDAO.getEntity(tvseriesName);
@@ -65,11 +86,5 @@ public class PutTVSeriesCommentCommand implements ActionCommand {
         String resultComment = commentDAO.getLatestComments(tvSeries, dateLastModified);
         commentDAO.closeConnection();
         return resultComment;
-    }
-
-    private void addPoint(String login) {
-        UserDAO userDAO = new UserDAO();
-        userDAO.addPoint(login, 0.1);
-        userDAO.closeConnection();
     }
 }

@@ -1,5 +1,6 @@
 package main.model.dao;
 
+import main.model.manager.PathsManager;
 import main.model.manager.QueryManager;
 
 import java.io.File;
@@ -7,8 +8,16 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class {@code ImageDAO} is a class, with the help of which data about images is extracted from database.
+ */
+
 public class ImageDAO extends AbstractDAO {
 
+    /**
+     * Add entity.
+     * @param fileName value to add.
+     */
     public void addEntity(String fileName) {
         try {
             PreparedStatement statement = connection.prepareStatement(QueryManager.getProperty("imageDAO.addEntity"));
@@ -21,8 +30,12 @@ public class ImageDAO extends AbstractDAO {
         }
     }
 
-    public List<String> formHomeSliderImagesList(String path) {
-        File directory = new File(path);
+    /**
+     * Form home slider image list.
+     * @return List with filenames of images.
+     */
+    public List<String> formHomeSliderImagesList() {
+        File directory = new File(PathsManager.getProperty("frames"));
         File[] files = directory.listFiles();
         List<String> pictureFileNames = new ArrayList<String>();
         for (File file : files) {
@@ -31,8 +44,12 @@ public class ImageDAO extends AbstractDAO {
         return pictureFileNames;
     }
 
+    /**
+     * Remove entity.
+     * @param path value represents filename of image to remove.
+     */
     public void removeHomeSliderImage(String path) {
-        File file = new File(path);
+        File file = new File(PathsManager.getProperty("frames") + path);
         file.delete();
     }
 }

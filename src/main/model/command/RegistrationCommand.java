@@ -9,6 +9,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 
+/**
+ * Command to sign up user.
+ */
+
 public class RegistrationCommand implements ActionCommand {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
@@ -33,6 +37,13 @@ public class RegistrationCommand implements ActionCommand {
         return page;
     }
 
+    /**
+     * Create and add user.
+     * @param login value, represents login of new user.
+     * @param email value, represents email of new user.
+     * @param password value, represents password hash-code of new user.
+     * @return User entity.
+     */
     private User createUser(String login, String email, int password) {
         User user = new User();
         user.setLogin(login);

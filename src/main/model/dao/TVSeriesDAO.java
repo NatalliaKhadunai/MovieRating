@@ -11,8 +11,16 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class {@code TVSeriesDAO} is a class, with the help of which data about tvSeries is extracted from database.
+ */
+
 public class TVSeriesDAO extends AbstractDAO {
-    public List<TVSeries> getTopTVSeries() {
+    /**
+     * Return top-rated tvSeries.
+     * @return List with top-rated TVSeries entities.
+     */
+    public List<TVSeries> getTopRatedTVSeries() {
         List<TVSeries> tvSeriesList = new ArrayList<>();
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(QueryManager.getProperty("tvseriesDAO.getTopTVSeries"));
@@ -38,6 +46,10 @@ public class TVSeriesDAO extends AbstractDAO {
         }
     }
 
+    /**
+     * Return top-commented tvSeries.
+     * @return List with top-commented TVSeries entities.
+     */
     public List<VideoProduct> getTopCommented() {
         List<VideoProduct> tvSeriesList = new ArrayList<>();
         try {
@@ -66,6 +78,11 @@ public class TVSeriesDAO extends AbstractDAO {
         }
     }
 
+    /**
+     * Search tvSeries by title.
+     * @param title value.
+     * @return TVSeries entity.
+     */
     public TVSeries getEntity(String title) {
         TVSeries tvSeries = new TVSeries();
         try {
@@ -91,6 +108,11 @@ public class TVSeriesDAO extends AbstractDAO {
         }
     }
 
+    /**
+     * Search tvSeries by ID.
+     * @param ID value.
+     * @return TVSeries entity.
+     */
     public TVSeries getEntity(int ID) {
         TVSeries tvSeries = new TVSeries();
         try {
@@ -116,6 +138,10 @@ public class TVSeriesDAO extends AbstractDAO {
         }
     }
 
+    /**
+     * Add entity.
+     * @param tvSeries entity to add.
+     */
     public void addEntity(TVSeries tvSeries) {
         try {
             PreparedStatement selectImageStatement = connection.prepareStatement(QueryManager.getProperty("selectImage"));
@@ -141,6 +167,11 @@ public class TVSeriesDAO extends AbstractDAO {
         }
     }
 
+    /**
+     * Search tvSeries by title.
+     * @param title value.
+     * @return List of TVSeries entities.
+     */
     public List<TVSeries> getAllEntities(String title) {
         List<TVSeries> tvSeriesList = new ArrayList<>();
         try {
@@ -169,6 +200,10 @@ public class TVSeriesDAO extends AbstractDAO {
         }
     }
 
+    /**
+     * Return all TVSeries entities.
+     * @return List with TVSeries entities.
+     */
     public List<TVSeries> getAllEntities() {
         List<TVSeries> tvSeriesList = new ArrayList<>();
         try {
@@ -196,6 +231,10 @@ public class TVSeriesDAO extends AbstractDAO {
         }
     }
 
+    /**
+     * Remove entity.
+     * @param title value of entity to remove.
+     */
     public void removeEntity(String title) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(QueryManager.getProperty("tvseriesDAO.removeEntity"));
@@ -208,6 +247,11 @@ public class TVSeriesDAO extends AbstractDAO {
         }
     }
 
+    /**
+     * Update entity.
+     * @param tvSeries entity to update.
+     * @param listToUpdate fields to update.
+     */
     public void updateEntity(TVSeries tvSeries, List<TVSeriesField> listToUpdate) {
         try {
             String updateSet = "UPDATE tvseries SET ";
@@ -241,6 +285,26 @@ public class TVSeriesDAO extends AbstractDAO {
             }
             updateSet += "WHERE ID=" + tvSeries.getID();
             PreparedStatement preparedStatement = connection.prepareStatement(updateSet);
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+        }
+        catch (SQLException e) {
+            logger.error(e);
+        }
+    }
+
+    /**
+     * Update tv series rating.
+     * @param tvSeries entity to update.
+     */
+    public void updateRating(TVSeries tvSeries) {
+        MarkDAO markDAO = new MarkDAO();
+        double avgMark = markDAO.averageMark(tvSeries);
+        markDAO.closeConnection();
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(QueryManager.getProperty("tvseriesDAO.updateRating"));
+            preparedStatement.setDouble(1, avgMark);
+            preparedStatement.setInt(2, tvSeries.getID());
             preparedStatement.executeUpdate();
             preparedStatement.close();
         }

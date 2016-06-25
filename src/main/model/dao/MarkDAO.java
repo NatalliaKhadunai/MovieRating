@@ -9,7 +9,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class MarkDAO extends AbstractDAO<Mark> {
+/**
+ * Class {@code MaarkDAO} is a class, with the help of which data about marks is extracted from database.
+ */
+
+public class MarkDAO extends AbstractDAO {
+    /**
+     * Add entity for film mark.
+     * @param login represents user, who made comment.
+     * @param film represents film, on which comment was made.
+     * @param mark value.
+     */
     public void addEntity(String login, Film film, int mark) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(QueryManager.getProperty("markDAO.addEntity_Film"));
@@ -24,14 +34,19 @@ public class MarkDAO extends AbstractDAO<Mark> {
         }
     }
 
-    public int numberOfComments(Film film) {
+    /**
+     * Return number of marks for given Film.
+     * @param film represents Film entity.
+     * @return number of marks for given Film.
+     */
+    public int numberOfMarks(Film film) {
         int result = 0;
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(QueryManager.getProperty("markDAO.numberOfComments_Film"));
+            PreparedStatement preparedStatement = connection.prepareStatement(QueryManager.getProperty("markDAO.numberOfMarks_Film"));
             preparedStatement.setInt(1, film.getID());
             ResultSet resultSet = preparedStatement.executeQuery();
             resultSet.next();
-            result = resultSet.getInt("numOfComments");
+            result = resultSet.getInt("numOfMarks");
             preparedStatement.close();
         }
         catch (SQLException e) {
@@ -40,6 +55,11 @@ public class MarkDAO extends AbstractDAO<Mark> {
         return result;
     }
 
+    /**
+     * Return average mark for Film.
+     * @param film represents Film entity.
+     * @return average mark for Film.
+     */
     public float averageMark(Film film) {
         float result = 0;
         try {
@@ -56,6 +76,12 @@ public class MarkDAO extends AbstractDAO<Mark> {
         return result;
     }
 
+    /**
+     * Search for mark.
+     * @param login value, represents user who put mark.
+     * @param film entity, represents film for which mark was put.
+     * @return Mark entity.
+     */
     public Mark getEntity(String login, Film film) {
         Mark mark = null;
         try {
@@ -80,6 +106,12 @@ public class MarkDAO extends AbstractDAO<Mark> {
         }
     }
 
+    /**
+     * Add entity for tvseries mark.
+     * @param login represents user, who made comment.
+     * @param tvSeries represents tvseries, on which comment was made.
+     * @param mark value.
+     */
     public void addEntity(String login, TVSeries tvSeries, int mark) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(QueryManager.getProperty("markDAO.addEntity_TVSeries"));
@@ -94,14 +126,19 @@ public class MarkDAO extends AbstractDAO<Mark> {
         }
     }
 
-    public int numberOfComments(TVSeries tvSeries) {
+    /**
+     * Return number of marks for given TVSeries.
+     * @param tvSeries represents TVSeries entity.
+     * @return number of marks for given TVSeries.
+     */
+    public int numberOfMarks(TVSeries tvSeries) {
         int result = 0;
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(QueryManager.getProperty("markDAO.numberOfComments_TVSeries"));
+            PreparedStatement preparedStatement = connection.prepareStatement(QueryManager.getProperty("markDAO.numberOfMarks_TVSeries"));
             preparedStatement.setInt(1, tvSeries.getID());
             ResultSet resultSet = preparedStatement.executeQuery();
             resultSet.next();
-            result = resultSet.getInt("numOfComments");
+            result = resultSet.getInt("numOMarks");
             preparedStatement.close();
         }
         catch (SQLException e) {
@@ -110,6 +147,11 @@ public class MarkDAO extends AbstractDAO<Mark> {
         return result;
     }
 
+    /**
+     * Return average mark for TVSeries.
+     * @param tvSeries represents TVSeries entity.
+     * @return average mark for TVSeries.
+     */
     public float averageMark(TVSeries tvSeries) {
         float result = 0;
         try {
@@ -126,6 +168,12 @@ public class MarkDAO extends AbstractDAO<Mark> {
         return result;
     }
 
+    /**
+     * Search for mark.
+     * @param login value, represents user who put mark.
+     * @param tvSeries entity, represents tvseries for which mark was put.
+     * @return Mark entity.
+     */
     public Mark getEntity(String login, TVSeries tvSeries) {
         Mark mark = null;
         try {

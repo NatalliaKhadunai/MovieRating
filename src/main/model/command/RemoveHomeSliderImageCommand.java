@@ -13,9 +13,8 @@ public class RemoveHomeSliderImageCommand implements ActionCommand {
     public String execute(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
         String page = null;
         String filename = new String(request.getParameter("fileName").getBytes("ISO-8859-1"), "UTF-8");
-        String directory = PathsManager.getProperty("frames");
         ImageDAO imageDAO = new ImageDAO();
-        imageDAO.removeHomeSliderImage(directory + filename);
+        imageDAO.removeHomeSliderImage(filename);
         imageDAO.closeConnection();
         page = Page.SERVICE_SERVLET.getPagePath() + "?requestType=homeSliderImagesPage";
         return page;

@@ -9,6 +9,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+/**
+ * Command to increase user status.
+ */
+
 public class UserStatusUpCommand implements ActionCommand {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {

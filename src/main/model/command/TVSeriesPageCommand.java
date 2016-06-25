@@ -12,6 +12,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+/**
+ * Command to form tv series page.
+ */
+
 public class TVSeriesPageCommand implements ActionCommand {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
@@ -21,7 +25,7 @@ public class TVSeriesPageCommand implements ActionCommand {
         TVSeries tvSeries = tvSeriesDAO.getEntity(title);
         tvSeriesDAO.closeConnection();
         CommentDAO commentDAO = new CommentDAO();
-        List<Comment> commentList = commentDAO.getAllEntities(title, RequestType.fromValue(request.getParameter("requestType")));
+        List<Comment> commentList = commentDAO.getAllEntities(tvSeries);
         commentDAO.closeConnection();
         request.setAttribute("tvseries", tvSeries);
         request.setAttribute("commentList", commentList);

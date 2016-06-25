@@ -13,6 +13,10 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Command to search.
+ */
+
 public class SearchCommand implements ActionCommand {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
@@ -39,6 +43,11 @@ public class SearchCommand implements ActionCommand {
         return page;
     }
 
+    /**
+     * Search for films by title.
+     * @param filmTitle value, represents search text.
+     * @return List with found Film entities.
+     */
     private List<Film> getAllFilms(String filmTitle) {
         FilmDAO filmDAO = new FilmDAO();
         List<Film> filmList = filmDAO.getAllEntities(filmTitle);
@@ -46,6 +55,11 @@ public class SearchCommand implements ActionCommand {
         return filmList;
     }
 
+    /**
+     * Search for tv series by title.
+     * @param tvseriesTitle value, represents search text.
+     * @return List with found TV Series entities.
+     */
     private List<TVSeries> getAllTVSeries(String tvseriesTitle) {
         TVSeriesDAO tvSeriesDAO = new TVSeriesDAO();
         List<TVSeries> tvSeriesList = tvSeriesDAO.getAllEntities(tvseriesTitle);
@@ -53,6 +67,11 @@ public class SearchCommand implements ActionCommand {
         return tvSeriesList;
     }
 
+    /**
+     * Forming result search list.
+     * @param searchText value, represents text to search.
+     * @return List with found Video Product entities.
+     */
     private List<VideoProduct> formResultList(String searchText) {
         List<Film> filmList = getAllFilms(searchText);
         List<TVSeries> tvSeriesList = getAllTVSeries(searchText);

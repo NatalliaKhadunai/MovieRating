@@ -14,34 +14,29 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class CommentDAO extends AbstractDAO<Comment> {
+/**
+ * Class {@code CommentDAO} is a class, with the help of which data about comments is extracted from database.
+ */
+
+public class CommentDAO extends AbstractDAO {
 
     public CommentDAO() {
         super();
     }
 
-    public List<Comment> getAllEntities(String title, RequestType requestType) {
+    /**
+     * Searches for all the comments made on given TVSeries
+     * @param tvSeries entity, for which comments are sought.
+     * @return list of found comments.
+     */
+    public List<Comment> getAllEntities(TVSeries tvSeries) {
         List<Comment> commentList = new ArrayList<>();
         PreparedStatement preparedStatement = null;
         try {
-            switch (requestType) {
-                case FILM_PAGE:
-                    preparedStatement = connection.prepareStatement(QueryManager.getProperty("commentDAO.getAllEntities_Film"));
-                    break;
-                case TVSERIES_PAGE:
-                    preparedStatement = connection.prepareStatement(QueryManager.getProperty("commentDAO.getAllEntities_TVSeries"));
-                    break;
-            }
-            preparedStatement.setString(1, title);
+            preparedStatement = connection.prepareStatement(QueryManager.getProperty("commentDAO.getAllEntities_TVSeries"));
+            preparedStatement.setString(1, tvSeries.getName());
             ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next())
-            {
-                Comment comment = new Comment();
-                comment.setUserLogin(resultSet.getString("UserLogin"));
-                comment.setContent(resultSet.getString("Content"));
-                comment.setDate(resultSet.getDate("Date"));
-                commentList.add(comment);
-            }
+            commentList = getListEntity(resultSet);
             preparedStatement.close();
         }
         catch (SQLException e) {
@@ -52,6 +47,58 @@ public class CommentDAO extends AbstractDAO<Comment> {
         }
     }
 
+    /**
+     * Searches for all the comments made on given TVSeries
+     * @param film entity, for which comments are sought.
+     * @return list of found comments.
+     */
+    public List<Comment> getAllEntities(Film film) {
+        List<Comment> commentList = null;
+        PreparedStatement preparedStatement = null;
+        try {
+            preparedStatement = connection.prepareStatement(QueryManager.getProperty("commentDAO.getAllEntities_Film"));
+            preparedStatement.setString(1, film.getName());
+            ResultSet resultSet = preparedStatement.executeQuery();
+            commentList = getListEntity(resultSet);
+            preparedStatement.close();
+        }
+        catch (SQLException e) {
+            logger.error(e);
+        }
+        finally {
+            return commentList;
+        }
+    }
+
+    /**
+     * Return List of comments data taken from given ResultSet.
+     * @param resultSet value is a set of data to be disassemble.
+     * @return list of comments.
+     */
+    private List<Comment> getListEntity(ResultSet resultSet) {
+        List<Comment> commentList = new ArrayList<>();
+        try {
+            while (resultSet.next()) {
+                Comment comment = new Comment();
+                comment.setUserLogin(resultSet.getString("UserLogin"));
+                comment.setContent(resultSet.getString("Content"));
+                comment.setDate(resultSet.getDate("Date"));
+                commentList.add(comment);
+            }
+        }
+        catch (SQLException e) {
+            logger.error(e);
+        }
+        return commentList;
+    }
+
+    /**
+     * Add entity for film comment.
+     * @param film represents film, on which comment was made.
+     * @param login represents user, who made comment.
+     * @param content represents content of the comment.
+     * @param date represents date, when comment was made.
+     */
     public void addEntity(Film film, String login, String content, Timestamp date) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(QueryManager.getProperty("commentDAO.addEntity_Film"));
@@ -67,6 +114,13 @@ public class CommentDAO extends AbstractDAO<Comment> {
         }
     }
 
+    /**
+     * Add entity for film comment.
+     * @param tvSeries represents tvSeries, on which comment was made.
+     * @param login represents user, who made comment.
+     * @param content represents content of the comment.
+     * @param date represents date, when comment was made.
+     */
     public void addEntity(TVSeries tvSeries, String login, String content, Timestamp date) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(QueryManager.getProperty("commentDAO.addEntity_TVSeries"));
@@ -82,6 +136,12 @@ public class CommentDAO extends AbstractDAO<Comment> {
         }
     }
 
+    /**
+     * Search for comments, that were made after given timestamp.
+     * @param film represents film, for which search is made.
+     * @param date represents time border.
+     * @return String value in XML-format, that contains info about found comments.
+     */
     public String getLatestComments(Film film, Timestamp date) {
         String result = null;
         try {
@@ -99,6 +159,12 @@ public class CommentDAO extends AbstractDAO<Comment> {
         }
     }
 
+    /**
+     * Search for comments, that were made after given timestamp.
+     * @param tvSeries represents TV Series, for which search is made.
+     * @param date represents time border.
+     * @return String value in XML-format, that contains info about found comments.
+     */
     public String getLatestComments(TVSeries tvSeries, Timestamp date) {
         String result = null;
         try {
@@ -116,6 +182,11 @@ public class CommentDAO extends AbstractDAO<Comment> {
         }
     }
 
+    /**
+     *
+     * @param resultSet
+     * @return
+     */
     private String commentsToXML(ResultSet resultSet) {
         String result = "<?xml version=\"1.0\"?><comments>";
         try {

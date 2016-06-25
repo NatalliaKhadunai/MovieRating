@@ -10,9 +10,16 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-public abstract class AbstractDAO<T> {
+/**
+ * Class {@code AbstractDAO} is a root class for all the DAO objects in the system.
+ */
+
+public abstract class AbstractDAO{
+    /** Logger for all the DAO objects in the system. */
     protected final static Logger logger = Logger.getLogger("DAOLogger");
+    /** DataSource object, from which Connection object are taken. */
     private static DataSource ds = null;
+    /** JDBC Connection. */
     protected Connection connection;
 
     static {
@@ -34,6 +41,9 @@ public abstract class AbstractDAO<T> {
         }
     }
 
+    /**
+     * Method for giving back existing connection.
+     */
     public void closeConnection() {
         try {
             connection.close();
@@ -41,15 +51,5 @@ public abstract class AbstractDAO<T> {
         catch (SQLException e) {
             logger.error(e);
         }
-    }
-
-    public T getEntity(String identifier) {
-        throw new UnsupportedOperationException();
-    }
-    public void addEntity(T entity) {
-        throw new UnsupportedOperationException();
-    }
-    public List<T> getAllEntities() {
-        throw new UnsupportedOperationException();
     }
 }

@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TVSeriesEditCommand implements ActionCommand {
-    private final Logger logger = Logger.getLogger("CommandLogger");
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         String page = null;
@@ -41,6 +40,11 @@ public class TVSeriesEditCommand implements ActionCommand {
         return page;
     }
 
+    /**
+     * Define fields to update.
+     * @param multiparts incoming data.
+     * @return List with fields to update.
+     */
     private List<TVSeriesField> getUpdatedFields(List<FileItem> multiparts) {
         List<TVSeriesField> updatedFields = new ArrayList<>();
         for(FileItem item : multiparts) {
@@ -60,6 +64,12 @@ public class TVSeriesEditCommand implements ActionCommand {
         return updatedFields;
     }
 
+    /**
+     * Update user entity fields.
+     * @param multiparts incoming data.
+     * @param updatedFields list of fields to update.
+     * @param tvSeries entity to update.
+     */
     private void updateFields(List<FileItem> multiparts, List<TVSeriesField> updatedFields, TVSeries tvSeries) {
         for(FileItem item : multiparts) {
             if (item.isFormField()) {
@@ -102,6 +112,11 @@ public class TVSeriesEditCommand implements ActionCommand {
         }
     }
 
+    /**
+     * Save poster.
+     * @param multiparts incoming data.
+     * @param tvSeries entity to update.
+     */
     private void savePoster(List<FileItem> multiparts, TVSeries tvSeries) {
         String directory = PathsManager.getProperty("posters");
         for (FileItem item : multiparts){

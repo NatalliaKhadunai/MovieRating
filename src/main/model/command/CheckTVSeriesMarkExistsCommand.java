@@ -11,8 +11,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
+/**
+ * Command to check if tv series mark exists.
+ */
+
 public class CheckTVSeriesMarkExistsCommand implements ActionCommand {
-    private final Logger logger = Logger.getLogger("CommandLogger");
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
         String page = null;

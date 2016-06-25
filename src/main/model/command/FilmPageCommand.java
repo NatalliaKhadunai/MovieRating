@@ -15,6 +15,10 @@ import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+/**
+ * Command to form film page.
+ */
+
 public class FilmPageCommand implements ActionCommand {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
@@ -26,7 +30,7 @@ public class FilmPageCommand implements ActionCommand {
         HttpSession session = request.getSession(false);
         User user = (User) session.getAttribute("loggedUser");
         CommentDAO commentDAO = new CommentDAO();
-        List<Comment> commentList = commentDAO.getAllEntities(title, RequestType.fromValue(request.getParameter("requestType")));
+        List<Comment> commentList = commentDAO.getAllEntities(film);
         commentDAO.closeConnection();
         request.setAttribute("film", film);
         request.setAttribute("commentList", commentList);

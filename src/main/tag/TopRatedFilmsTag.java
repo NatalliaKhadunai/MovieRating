@@ -17,7 +17,7 @@ public class TopRatedFilmsTag extends TagSupport {
         try {
             JspWriter out = pageContext.getOut();
             FilmDAO filmDAO = new FilmDAO();
-            List<Film> filmList = filmDAO.getTopFilms();
+            List<Film> filmList = filmDAO.getTopRatedFilms();
             filmDAO.closeConnection();
             int i = 1;
             for (Film film : filmList) {

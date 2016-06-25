@@ -17,7 +17,7 @@ public class TopRatedTVSeriesTag extends TagSupport {
         try {
             JspWriter out = pageContext.getOut();
             TVSeriesDAO tvSeriesDAO = new TVSeriesDAO();
-            List<TVSeries> tvSeriesList = tvSeriesDAO.getTopTVSeries();
+            List<TVSeries> tvSeriesList = tvSeriesDAO.getTopRatedTVSeries();
             tvSeriesDAO.closeConnection();
             int i = 1;
             for (TVSeries tvSeries : tvSeriesList) {

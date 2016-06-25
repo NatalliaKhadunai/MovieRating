@@ -17,8 +17,11 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Command to update user entity.
+ */
+
 public class EditProfileCommand implements ActionCommand {
-    private final Logger logger = Logger.getLogger("CommandLogger");
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         String page = null;
@@ -40,6 +43,12 @@ public class EditProfileCommand implements ActionCommand {
         return page;
     }
 
+    /**
+     * Define fields to update.
+     * @param multiparts incoming data.
+     * @param user entity to update.
+     * @return List with fields to update.
+     */
     private List<ProfileField> setUpdatedFields(List<FileItem> multiparts, User user) {
         List<ProfileField> updatedFields = new ArrayList<>();
         for (FileItem item : multiparts) {
@@ -75,6 +84,11 @@ public class EditProfileCommand implements ActionCommand {
         return updatedFields;
     }
 
+    /**
+     * Save profile photo.
+     * @param multiparts incoming data.
+     * @param user entity to update.
+     */
     private void saveProfilePhoto(List<FileItem> multiparts, User user) {
         String directory = PathsManager.getProperty("userProfilePhotos");
         for (FileItem item : multiparts) {

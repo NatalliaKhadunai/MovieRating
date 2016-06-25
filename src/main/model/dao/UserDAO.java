@@ -11,12 +11,21 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserDAO extends AbstractDAO<User> {
+/**
+ * Class {@code UserDAO} is a class, with the help of which data about users is extracted from database.
+ */
+
+public class UserDAO extends AbstractDAO {
 
     public UserDAO() {
         super();
     }
 
+    /**
+     * Search entity by login.
+     * @param login value.
+     * @return found User entity.
+     */
     public User getEntity(String login) {
         if (login == null || login.equals("")) return null;
         User user = null;
@@ -36,6 +45,10 @@ public class UserDAO extends AbstractDAO<User> {
         }
     }
 
+    /**
+     * Add entity.
+     * @param user entity to add.
+     */
     public void addEntity(User user) {
         if (user == null) return;
         try {
@@ -52,6 +65,11 @@ public class UserDAO extends AbstractDAO<User> {
         }
     }
 
+    /**
+     * Update entity.
+     * @param user entity to update.
+     * @param listToUpdate fields to update.
+     */
     public void updateEntity(User user, List<ProfileField> listToUpdate) {
         if (user == null || listToUpdate.size() == 0) return;
         try {
@@ -82,6 +100,11 @@ public class UserDAO extends AbstractDAO<User> {
         }
     }
 
+    /**
+     * Change user password.
+     * @param login value, that identifies User entity.
+     * @param passwordHash value.
+     */
     public void changeUserPassword(String login, int passwordHash) {
         if (login == null || login.equals("") || passwordHash<=0) return;
         try {
@@ -96,6 +119,11 @@ public class UserDAO extends AbstractDAO<User> {
         }
     }
 
+    /**
+     * Add points to user status coefficient.
+     * @param login value, that identifies User entity.
+     * @param points value to add.
+     */
     public void addPoint(String login, double points) {
         if (login == null || login.equals("") || points == 0) return;
         User user = getEntity(login);
@@ -111,6 +139,10 @@ public class UserDAO extends AbstractDAO<User> {
         }
     }
 
+    /**
+     * Return all User entities.
+     * @return List with User entities.
+     */
     public List<User> getAllEntities() {
         List<User> users = null;
         try {
@@ -122,11 +154,31 @@ public class UserDAO extends AbstractDAO<User> {
         catch (SQLException e) {
             logger.error(e);
         }
-        finally {
-            return users;
-        }
+        return users;
     }
 
+    /**
+     * Return number of users in system.
+     * @return number of users in system.
+     */
+    public int getNumOfUsers() {
+        int result = 0;
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(QueryManager.getProperty("userDAO.getNumOfUsers"));
+            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            result = resultSet.getInt("numOfUsers");
+            preparedStatement.close();
+        }
+        catch (SQLException e) {
+            logger.error(e);
+        }
+        return result;
+    }
+    /**
+     * Increase user status.
+     * @param user entity represents user, which status should be increased.
+     */
     public void userStatusUp(User user) {
         if (user == null) return;
         Status maximumStatus = Status.maximumStatus();
@@ -141,12 +193,20 @@ public class UserDAO extends AbstractDAO<User> {
         }
     }
 
+    /**
+     * Increase user status.
+     * @param login value represents login of user, which status should be increased.
+     */
     public void userStatusUp(String login) {
         if (login == null || login.equals("")) return;
         User user = getEntity(login);
         userStatusUp(user);
     }
 
+    /**
+     * Decrease user status.
+     * @param user entity represents user, which status should be decreased.
+     */
     public void userStatusDown(User user) {
         if (user == null) return;
         Status minimalStatus = Status.minimalStatus();
@@ -161,24 +221,40 @@ public class UserDAO extends AbstractDAO<User> {
         }
     }
 
+    /**
+     * Decrease user status.
+     * @param login value represents login of user, which status should be decreased.
+     */
     public void userStatusDown(String login) {
         if (login == null || login.equals("")) return;
         User user = getEntity(login);
         userStatusDown(user);
     }
 
+    /**
+     * Ban user.
+     * @param user entity represents user, which should be baned.
+     */
     public void userBan(User user) {
         if (user == null) return;
         user.setStatusName(Status.banedStatus().name());
         updateStatus(user);
     }
 
+    /**
+     * Ban user.
+     * @param login value represents login of user, which should be baned.
+     */
     public void userBan(String login) {
         if (login == null || login.equals("")) return;
         User user = getEntity(login);
         userBan(user);
     }
 
+    /**
+     * Remove user ban.
+     * @param user entity represents user, which ban should be removed.
+     */
     public void userRemoveBan(User user) {
         if (user == null) return;
         Status currentStatus =  Status.defineStatus(user.getStatusCoefficient());
@@ -186,12 +262,20 @@ public class UserDAO extends AbstractDAO<User> {
         updateStatus(user);
     }
 
+    /**
+     * Remove user ban.
+     * @param login value represents login of user, which ban should be removed.
+     */
     public void userRemoveBan(String login) {
         if (login == null || login.equals("")) return;
         User user = getEntity(login);
         userRemoveBan(user);
     }
 
+    /**
+     * Update user status coefficient.
+     * @param user entity, which status coefficient should be updated.
+     */
     private void updateStatusCoefficient(User user) {
         if (user == null) return;
         try {
@@ -206,6 +290,10 @@ public class UserDAO extends AbstractDAO<User> {
         }
     }
 
+    /**
+     * Update user status.
+     * @param user entity, which status should be updated.
+     */
     private void updateStatus(User user) {
         if (user == null) return;
         try {
@@ -220,6 +308,11 @@ public class UserDAO extends AbstractDAO<User> {
         }
     }
 
+    /**
+     * Define user profile photo by sex.
+     * @param sex value.
+     * @return profile photo filename.
+     */
     private String defineProfilePhotoBySex(String sex) {
         if (sex == null || sex.equals("")) return null;
         String profilePhoto = null;
@@ -229,6 +322,11 @@ public class UserDAO extends AbstractDAO<User> {
         return profilePhoto;
     }
 
+    /**
+     * Invoke user info from ResutSet.
+     * @param resultSet from which data will be invoked.
+     * @return User entity.
+     */
     private User getSingleEntity(ResultSet resultSet) {
         User user = null;
         try {
@@ -252,6 +350,11 @@ public class UserDAO extends AbstractDAO<User> {
         }
     }
 
+    /**
+     * Form List with User entities.
+     * @param resultSet from which data will be invoked.
+     * @return List with User entities.
+     */
     private List<User> getListEntity(ResultSet resultSet) {
         List<User> users = new ArrayList<>();
         try {

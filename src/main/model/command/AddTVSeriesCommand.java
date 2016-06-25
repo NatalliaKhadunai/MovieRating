@@ -17,17 +17,18 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
-public class AddTVSeriesCommand implements ActionCommand {
-    private final Logger logger = Logger.getLogger("CommandLogger");
+/**
+ * Command to add tv series entity to database.
+ */
 
+public class AddTVSeriesCommand implements ActionCommand {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         String page = null;
         if(ServletFileUpload.isMultipartContent(request)){
             try {
-                String tvseriesName = null;
                 List<FileItem> multiparts = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
-                TVSeries tvSeries = new TVSeries();
+                TVSeries tvSeries = fillInfo(multiparts);
                 ImageDAO imageDAO = new ImageDAO();
                 imageDAO.addEntity(tvSeries.getPosterFileName());
                 imageDAO.closeConnection();
@@ -42,6 +43,11 @@ public class AddTVSeriesCommand implements ActionCommand {
         return page;
     }
 
+    /**
+     * Fill tv series object with received data.
+     * @param multiparts incoming data.
+     * @return incoming data.
+     */
     private TVSeries fillInfo(List<FileItem> multiparts) {
         TVSeries tvSeries = new TVSeries();
         for(FileItem item : multiparts) {
@@ -87,6 +93,11 @@ public class AddTVSeriesCommand implements ActionCommand {
         return tvSeries;
     }
 
+    /**
+     * Save tv series poster.
+     * @param multiparts incoming data.
+     * @param tvSeries entity.
+     */
     private void savePoster(List<FileItem> multiparts, TVSeries tvSeries) {
         String directory = PathsManager.getProperty("posters");
         for(FileItem item : multiparts){

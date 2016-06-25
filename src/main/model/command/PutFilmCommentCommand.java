@@ -15,8 +15,11 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+/**
+ * Command to put film comment.
+ */
+
 public class PutFilmCommentCommand implements ActionCommand {
-    private final Logger logger = Logger.getLogger("CommandLogger");
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
         String page = null;
@@ -28,7 +31,6 @@ public class PutFilmCommentCommand implements ActionCommand {
         addComment(filmName, login, content, date);
         Timestamp dateLastModified = defineDateTime(Long.valueOf(request.getParameter("lastModified")));
         String resultComment = recentComments(filmName, dateLastModified);
-        addPoint(login);
 
         response.setContentType("application/xml");
         response.setCharacterEncoding("UTF-8");
@@ -41,6 +43,11 @@ public class PutFilmCommentCommand implements ActionCommand {
         return page;
     }
 
+    /**
+     * Define timestamp from milliseconds.
+     * @param timeMillis value, represents time in milliseconds.
+     * @return computed TimeStamp.
+     */
     private Timestamp defineDateTime(long timeMillis) {
         DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         Calendar calendar = Calendar.getInstance();
@@ -50,6 +57,13 @@ public class PutFilmCommentCommand implements ActionCommand {
         return date;
     }
 
+    /**
+     * Add comment entity.
+     * @param filmName represents film, on which comment was made.
+     * @param login represents user, who made comment.
+     * @param content represents content of the comment.
+     * @param date represents date, when comment was made.
+     */
     private void addComment(String filmName, String login, String content, Timestamp date) {
         FilmDAO filmDAO = new FilmDAO();
         Film film = filmDAO.getEntity(filmName);
@@ -59,6 +73,12 @@ public class PutFilmCommentCommand implements ActionCommand {
         commentDAO.closeConnection();
     }
 
+    /**
+     * Return comments made on film, that were left after specified time.
+     * @param filmName represents film, on which comment was made.
+     * @param dateLastModified time border.
+     * @return String value in XML-format, that contains info about found comments.
+     */
     private String recentComments(String filmName, Timestamp dateLastModified) {
         FilmDAO filmDAO = new FilmDAO();
         Film film = filmDAO.getEntity(filmName);
@@ -67,11 +87,5 @@ public class PutFilmCommentCommand implements ActionCommand {
         String resultComment = commentDAO.getLatestComments(film, dateLastModified);
         commentDAO.closeConnection();
         return resultComment;
-    }
-
-    private void addPoint(String login) {
-        UserDAO userDAO = new UserDAO();
-        userDAO.addPoint(login, 0.1);
-        userDAO.closeConnection();
     }
 }

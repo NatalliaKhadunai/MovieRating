@@ -12,8 +12,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.util.List;
 
+/**
+ * Command to add home slider image.
+ */
+
 public class AddHomeSliderImageCommand implements ActionCommand {
-    private final Logger logger = Logger.getLogger("CommandLogger");
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         String page = null;
@@ -30,6 +33,11 @@ public class AddHomeSliderImageCommand implements ActionCommand {
         return page;
     }
 
+    /**
+     * Return video product name.
+     * @param multiparts incoming data.
+     * @return video product name.
+     */
     private String getVideoProductName(List<FileItem> multiparts) {
         String videoProductName = null;
         for(FileItem item : multiparts) {
@@ -43,6 +51,10 @@ public class AddHomeSliderImageCommand implements ActionCommand {
         return videoProductName;
     }
 
+    /**
+     * Save frame.
+     * @param multiparts incoming data.
+     */
     private void saveFrame(List<FileItem> multiparts) {
         String directory = PathsManager.getProperty("frames");
         String videoProductName = getVideoProductName(multiparts);

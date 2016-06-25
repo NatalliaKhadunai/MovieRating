@@ -12,12 +12,21 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FilmDAO extends AbstractDAO<Film> {
+/**
+ * Class {@code FilmDAO} is a class, with the help of which data about films is extracted from database.
+ */
+
+public class FilmDAO extends AbstractDAO {
 
     public FilmDAO() {
         super();
     }
 
+    /**
+     * Search film by title.
+     * @param title value.
+     * @return Film entity.
+     */
     public Film getEntity(String title) {
         if (title == null || title.equals("")) return null;
         Film film = null;
@@ -44,6 +53,11 @@ public class FilmDAO extends AbstractDAO<Film> {
         }
     }
 
+    /**
+     * Search film by ID.
+     * @param ID value.
+     * @return Film entity.
+     */
     public Film getEntity(int ID) {
         if (ID <= 0) return null;
         Film film = null;
@@ -70,6 +84,11 @@ public class FilmDAO extends AbstractDAO<Film> {
         }
     }
 
+    /**
+     * Search films by title.
+     * @param title value.
+     * @return List of Film entities.
+     */
     public List<Film> getAllEntities(String title) {
         if (title == null || title.equals("")) return null;
         List<Film> filmList = new ArrayList<>();
@@ -96,6 +115,10 @@ public class FilmDAO extends AbstractDAO<Film> {
         }
     }
 
+    /**
+     * Return all Film entities.
+     * @return List with Film entities.
+     */
     public List<Film> getAllEntities() {
         List<Film> filmList = new ArrayList<>();
         try {
@@ -120,7 +143,11 @@ public class FilmDAO extends AbstractDAO<Film> {
         }
     }
 
-    public List<Film> getTopFilms() {
+    /**
+     * Return top-rated films.
+     * @return List with top-rated Film entities.
+     */
+    public List<Film> getTopRatedFilms() {
         List<Film> filmList = new ArrayList<>();
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(QueryManager.getProperty("filmDAO.getTopFilms"));
@@ -143,6 +170,10 @@ public class FilmDAO extends AbstractDAO<Film> {
         }
     }
 
+    /**
+     * Return top-commented films.
+     * @return List with top-commented Film entities.
+     */
     public List<VideoProduct> getTopCommented() {
         List<VideoProduct> filmList = new ArrayList<>();
         try {
@@ -173,6 +204,10 @@ public class FilmDAO extends AbstractDAO<Film> {
         }
     }
 
+    /**
+     * Add entity.
+     * @param film entity to add.
+     */
     public void addEntity(Film film) {
         if (film == null) return;
         try {
@@ -197,6 +232,10 @@ public class FilmDAO extends AbstractDAO<Film> {
         }
     }
 
+    /**
+     * Remove entity.
+     * @param title value of entity to remove.
+     */
     public void removeEntity(String title) {
         if (title == null || title.equals("")) return;
         try {
@@ -210,6 +249,11 @@ public class FilmDAO extends AbstractDAO<Film> {
         }
     }
 
+    /**
+     * Update entity.
+     * @param film entity to update.
+     * @param listToUpdate fields to update.
+     */
     public void updateEntity(Film film, List<FilmField> listToUpdate) {
         if (film == null || listToUpdate.size() == 0) return;
         try {
@@ -236,6 +280,26 @@ public class FilmDAO extends AbstractDAO<Film> {
             }
             updateSet += "WHERE ID=" + film.getID();
             PreparedStatement preparedStatement = connection.prepareStatement(updateSet);
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+        }
+        catch (SQLException e) {
+            logger.error(e);
+        }
+    }
+
+    /**
+     * Update film rating.
+     * @param film entity to update.
+     */
+    public void updateRating(Film film) {
+        MarkDAO markDAO = new MarkDAO();
+        double avgMark = markDAO.averageMark(film);
+        markDAO.closeConnection();
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(QueryManager.getProperty("filmDAO.updateRating"));
+            preparedStatement.setDouble(1, avgMark);
+            preparedStatement.setInt(2, film.getID());
             preparedStatement.executeUpdate();
             preparedStatement.close();
         }

@@ -19,15 +19,16 @@ import java.io.UnsupportedEncodingException;
 import java.sql.Date;
 import java.util.List;
 
-public class AddFilmCommand implements ActionCommand {
-    private final Logger logger = Logger.getLogger("CommandLogger");
+/**
+ * Command to add film entity to database.
+ */
 
+public class AddFilmCommand implements ActionCommand {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         String page = null;
         if(ServletFileUpload.isMultipartContent(request)){
             try {
-                String filmName = null;
                 List<FileItem> multiparts = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
                 Film film = fillInfo(multiparts);
                 ImageDAO imageDAO = new ImageDAO();
@@ -44,6 +45,11 @@ public class AddFilmCommand implements ActionCommand {
         return page;
     }
 
+    /**
+     * Fill film object with received data.
+     * @param multiparts incoming data.
+     * @return incoming data.
+     */
     private Film fillInfo(List<FileItem> multiparts) {
         Film film = new Film();
         for(FileItem item : multiparts) {
@@ -81,6 +87,11 @@ public class AddFilmCommand implements ActionCommand {
         return film;
     }
 
+    /**
+     * Save film poster.
+     * @param multiparts incoming data.
+     * @param film entity.
+     */
     private void savePoster(List<FileItem> multiparts, Film film) {
         String directory = PathsManager.getProperty("posters");
         for(FileItem item : multiparts){

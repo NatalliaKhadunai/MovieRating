@@ -18,8 +18,11 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Command to update film entity.
+ */
+
 public class FilmEditCommand implements ActionCommand {
-    private final Logger logger = Logger.getLogger("CommandLogger");
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         String page = null;
@@ -42,6 +45,11 @@ public class FilmEditCommand implements ActionCommand {
         return page;
     }
 
+    /**
+     * Define fields to update.
+     * @param multiparts incoming data.
+     * @return List with fields to update.
+     */
     private List<FilmField> getUpdatedFields(List<FileItem> multiparts) {
         List<FilmField> updatedFields = new ArrayList<>();
         for(FileItem item : multiparts) {
@@ -61,6 +69,12 @@ public class FilmEditCommand implements ActionCommand {
         return updatedFields;
     }
 
+    /**
+     * Update user entity fields.
+     * @param multiparts incoming data.
+     * @param updatedFields list of fields to update.
+     * @param film entity to update.
+     */
     private void updateFields(List<FileItem> multiparts, List<FilmField> updatedFields, Film film) {
         for(FileItem item : multiparts) {
             if (item.isFormField()) {
@@ -95,6 +109,11 @@ public class FilmEditCommand implements ActionCommand {
         }
     }
 
+    /**
+     * Save poster.
+     * @param multiparts incoming data.
+     * @param film entity to update.
+     */
     private void savePoster(List<FileItem> multiparts, Film film) {
         String directory = PathsManager.getProperty("posters");
         for (FileItem item : multiparts){
