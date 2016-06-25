@@ -2,7 +2,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<html lang="en">
+<%@ taglib uri="/WEB-INF/customTag.tld" prefix="ct" %>
+<html>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -37,23 +38,7 @@
             </h4>
             <h4>
                 <fmt:message key="label.status" bundle="${rb}"/>
-                <c:choose>
-                    <c:when test="${user.statusName eq 'GOLD'}">
-                        <span class="glyphicon glyphicon-king" style="color: gold"></span>${user.statusName}
-                    </c:when>
-                    <c:when test="${user.statusName eq 'SILVER'}">
-                        <span class="glyphicon glyphicon-knight" style="color: silver"></span>${user.statusName}
-                    </c:when>
-                    <c:when test="${user.statusName eq 'BRONZE'}">
-                        <span class="glyphicon glyphicon-pawn" style="color: #CD7F32"></span>${user.statusName}
-                    </c:when>
-                    <c:when test="${user.statusName eq 'BAN'}">
-                        <span class="glyphicon glyphicon-minus-sign" style="color: red"></span>${user.statusName}
-                    </c:when>
-                    <c:when test="${user.statusName eq 'ADMIN'}">
-                        ${user.statusName}
-                    </c:when>
-                </c:choose>
+                <ct:statusTag status="${user.statusName}"></ct:statusTag>
             </h4>
             <h4>
                 <fmt:message key="label.statusCoefficient" bundle="${rb}"/>: ${user.statusCoefficient}

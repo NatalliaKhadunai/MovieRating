@@ -15,4 +15,15 @@
         <tag-class>main.tag.TopRatedTVSeriesTag</tag-class>
         <body-content>empty</body-content>
     </tag>
+    <tag>
+        <name>statusTag</name>
+        <tag-class>main.tag.UserStatusTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>status</name>
+            <required>true</required>
+            <description>Defines user status</description>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
 </taglib>

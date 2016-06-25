@@ -2,6 +2,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib uri="/WEB-INF/customTag.tld" prefix="ct" %>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -37,23 +38,7 @@
             </h4>
             <h4>
                 <fmt:message key="label.status" bundle="${rb}"/>
-                <c:choose>
-                    <c:when test="${sessionScope.loggedUser.statusName eq 'GOLD'}">
-                        <span class="glyphicon glyphicon-king" style="color: gold"></span>${sessionScope.loggedUser.statusName}
-                    </c:when>
-                    <c:when test="${sessionScope.loggedUser.statusName eq 'SILVER'}">
-                        <span class="glyphicon glyphicon-knight" style="color: silver"></span>${sessionScope.loggedUser.statusName}
-                    </c:when>
-                    <c:when test="${sessionScope.loggedUser.statusName eq 'BRONZE'}">
-                        <span class="glyphicon glyphicon-pawn" style="color: #CD7F32"></span>${sessionScope.loggedUser.statusName}
-                    </c:when>
-                    <c:when test="${sessionScope.loggedUser.statusName eq 'BAN'}">
-                        <span class="glyphicon glyphicon-minus-sign" style="color: red"></span>${sessionScope.loggedUser.statusName}
-                    </c:when>
-                    <c:when test="${sessionScope.loggedUser.statusName eq 'ADMIN'}">
-                        ${sessionScope.loggedUser.statusName}
-                    </c:when>
-                </c:choose>
+                <ct:statusTag status="${sessionScope.loggedUser.statusName}"></ct:statusTag>
             </h4>
             <h4><fmt:message key="label.statusCoefficient" bundle="${rb}"/>: ${sessionScope.loggedUser.statusCoefficient}
             </h4>
