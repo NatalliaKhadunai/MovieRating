@@ -42,7 +42,7 @@ public abstract class AbstractDAO{
 
     public AbstractDAO() {
         try {
-            connection = ds.getConnection();
+            if (ds!= null) connection = ds.getConnection();
         }
         catch (SQLException e) {
             logger.error(e);

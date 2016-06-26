@@ -22,6 +22,7 @@ public class MarkDAO extends AbstractDAO {
      * @param mark value.
      */
     public void addEntity(String login, Film film, int mark) {
+        if (login == null || login.equals("") || film == null || mark <=0) return;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(QueryManager.getProperty("markDAO.addEntity_Film"));
             preparedStatement.setInt(1, film.getID());
@@ -41,6 +42,7 @@ public class MarkDAO extends AbstractDAO {
      * @return number of marks for given Film.
      */
     public int numberOfMarks(Film film) {
+        if (film == null) return -1;
         int result = 0;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(QueryManager.getProperty("markDAO.numberOfMarks_Film"));
@@ -62,6 +64,7 @@ public class MarkDAO extends AbstractDAO {
      * @return average mark for Film.
      */
     public float averageMark(Film film) {
+        if (film == null) return -1;
         float result = 0;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(QueryManager.getProperty("markDAO.averageMark_Film"));
@@ -84,6 +87,7 @@ public class MarkDAO extends AbstractDAO {
      * @return Mark entity.
      */
     public Mark getEntity(String login, Film film) {
+        if (login == null || login.equals("") || film == null) return null;
         Mark mark = null;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(QueryManager.getProperty("markDAO.getEntity_Film"));
@@ -114,6 +118,7 @@ public class MarkDAO extends AbstractDAO {
      * @param mark value.
      */
     public void addEntity(String login, TVSeries tvSeries, int mark) {
+        if (login == null || login.equals("") || tvSeries == null || mark <=0) return;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(QueryManager.getProperty("markDAO.addEntity_TVSeries"));
             preparedStatement.setInt(1, tvSeries.getID());
@@ -133,6 +138,7 @@ public class MarkDAO extends AbstractDAO {
      * @return number of marks for given TVSeries.
      */
     public int numberOfMarks(TVSeries tvSeries) {
+        if (tvSeries == null) return -1;
         int result = 0;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(QueryManager.getProperty("markDAO.numberOfMarks_TVSeries"));
@@ -154,6 +160,7 @@ public class MarkDAO extends AbstractDAO {
      * @return average mark for TVSeries.
      */
     public float averageMark(TVSeries tvSeries) {
+        if (tvSeries == null) return -1;
         float result = 0;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(QueryManager.getProperty("markDAO.averageMark_TVSeries"));
@@ -176,6 +183,7 @@ public class MarkDAO extends AbstractDAO {
      * @return Mark entity.
      */
     public Mark getEntity(String login, TVSeries tvSeries) {
+        if (login == null || login.equals("") || tvSeries == null) return null;
         Mark mark = null;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(QueryManager.getProperty("markDAO.getEntity_TVSeries"));

@@ -7,6 +7,7 @@ import main.model.entity.TVSeries;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import javax.print.Doc;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -40,6 +41,7 @@ public class CommentDAO extends AbstractDAO {
      * @return list of found comments.
      */
     public List<Comment> getAllEntities(TVSeries tvSeries) {
+        if (tvSeries == null) return null;
         List<Comment> commentList = new ArrayList<>();
         PreparedStatement preparedStatement = null;
         try {
@@ -63,6 +65,7 @@ public class CommentDAO extends AbstractDAO {
      * @return list of found comments.
      */
     public List<Comment> getAllEntities(Film film) {
+        if (film == null) return null;
         List<Comment> commentList = null;
         PreparedStatement preparedStatement = null;
         try {
@@ -110,6 +113,8 @@ public class CommentDAO extends AbstractDAO {
      * @param date represents date, when comment was made.
      */
     public void addEntity(Film film, String login, String content, Timestamp date) {
+        if (film == null || login == null || login.equals("") ||
+                content == null || content.equals("") || date == null) return;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(QueryManager.getProperty("commentDAO.addEntity_Film"));
             preparedStatement.setInt(1, film.getID());
@@ -132,6 +137,8 @@ public class CommentDAO extends AbstractDAO {
      * @param date represents date, when comment was made.
      */
     public void addEntity(TVSeries tvSeries, String login, String content, Timestamp date) {
+        if (tvSeries == null || login == null || login.equals("") ||
+                content == null || content.equals("") || date == null) return;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(QueryManager.getProperty("commentDAO.addEntity_TVSeries"));
             preparedStatement.setInt(1, tvSeries.getID());
@@ -153,6 +160,7 @@ public class CommentDAO extends AbstractDAO {
      * @return String value in XML-format, that contains info about found comments.
      */
     public String getLatestComments(Film film, Timestamp date, Locale locale) {
+        if (film == null || date == null || locale == null) return null;
         String result = null;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(QueryManager.getProperty("commentDAO.getLatestComments_Film"));
@@ -176,6 +184,7 @@ public class CommentDAO extends AbstractDAO {
      * @return String value in XML-format, that contains info about found comments.
      */
     public String getLatestComments(TVSeries tvSeries, Timestamp date, Locale locale) {
+        if (tvSeries == null || date == null || locale == null) return null;
         String result = null;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(QueryManager.getProperty("commentDAO.getLatestComments_TVSeries"));
@@ -207,31 +216,8 @@ public class CommentDAO extends AbstractDAO {
             logger.error(e);
         }
         Document doc = build.newDocument();
-        Element root = doc.createElement("comments");
+        Element root = createAndFillRootElement(doc, resultSet, locale);
         doc.appendChild(root);
-        try {
-            while (resultSet.next()) {
-                Element member = doc.createElement("comment");
-                root.appendChild(member);
-                Element name = doc.createElement("userLogin");
-                name.appendChild(doc.createTextNode(resultSet.getString("UserLogin")));
-                member.appendChild(name);
-                Element content = doc.createElement("content");
-                content.appendChild(doc.createTextNode(resultSet.getString("Content")));
-                member.appendChild(content);
-                DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
-                DateFormat tf = DateFormat.getTimeInstance(DateFormat.SHORT, locale);
-                String formattedDate = df.format(resultSet.getTimestamp("Date"));
-                String formattedTime = tf.format(resultSet.getTimestamp("Date"));
-                Element dateTime = doc.createElement("date");
-                dateTime.appendChild(doc.createTextNode(formattedDate + " " + formattedTime));
-                member.appendChild(dateTime);
-
-            }
-        }
-        catch (SQLException e) {
-            logger.error(e);
-        }
         TransformerFactory tFact = TransformerFactory.newInstance();
         Transformer trans = null;
         try {
@@ -250,5 +236,39 @@ public class CommentDAO extends AbstractDAO {
             logger.error(e);
         }
         return writer.toString();
+    }
+
+    /**
+     * Create root element for xml-document and fill it with data.
+     * @param doc document, where elements are created.
+     * @param resultSet set of data to fill-in xml-document.
+     * @param locale value, represents the way some data should be formatted.
+     * @return root element of the document.
+     */
+    private Element createAndFillRootElement(Document doc, ResultSet resultSet, Locale locale) {
+        Element root = doc.createElement("comments");
+        try {
+            while (resultSet.next()) {
+                Element member = doc.createElement("comment");
+                root.appendChild(member);
+                Element name = doc.createElement("userLogin");
+                name.appendChild(doc.createTextNode(resultSet.getString("UserLogin")));
+                member.appendChild(name);
+                Element content = doc.createElement("content");
+                content.appendChild(doc.createTextNode(resultSet.getString("Content")));
+                member.appendChild(content);
+                DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+                DateFormat tf = DateFormat.getTimeInstance(DateFormat.SHORT, locale);
+                String formattedDate = df.format(resultSet.getTimestamp("Date"));
+                String formattedTime = tf.format(resultSet.getTimestamp("Date"));
+                Element dateTime = doc.createElement("date");
+                dateTime.appendChild(doc.createTextNode(formattedDate + " " + formattedTime));
+                member.appendChild(dateTime);
+            }
+        }
+        catch (SQLException e) {
+            logger.error(e);
+        }
+        return root;
     }
 }

@@ -294,6 +294,7 @@ public class FilmDAO extends AbstractDAO {
      * @param film entity to update.
      */
     public void updateRating(Film film) {
+        if (film == null) return;
         MarkDAO markDAO = new MarkDAO();
         double avgMark = markDAO.averageMark(film);
         markDAO.closeConnection();

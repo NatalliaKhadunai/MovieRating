@@ -19,6 +19,7 @@ public class ImageDAO extends AbstractDAO {
      * @param fileName value to add.
      */
     public void addEntity(String fileName) {
+        if (fileName == null || fileName.equals("")) return;
         try {
             PreparedStatement statement = connection.prepareStatement(QueryManager.getProperty("imageDAO.addEntity"));
             statement.setString(1, fileName);
@@ -49,6 +50,7 @@ public class ImageDAO extends AbstractDAO {
      * @param path value represents filename of image to remove.
      */
     public void removeHomeSliderImage(String path) {
+        if (path == null || path.equals("")) return;
         File file = new File(PathsManager.getProperty("frames") + path);
         file.delete();
     }

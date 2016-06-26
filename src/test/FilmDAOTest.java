@@ -57,4 +57,9 @@ public class FilmDAOTest {
     public void testUpdateEntityZeroFieldsToUpdate() throws Exception {
         filmDAO.updateEntity(new Film(), new ArrayList<>());
     }
+
+    @Test
+    public void testUpdateRating() throws Exception {
+        filmDAO.updateRating(null);
+    }
 }
