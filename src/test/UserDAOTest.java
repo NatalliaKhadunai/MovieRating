@@ -45,13 +45,8 @@ public class UserDAOTest {
     }
 
     @Test
-    public void testAddPointNullLogin() throws Exception {
+    public void testAddPoint() throws Exception {
         userDAO.addPoint(null, 0);
-    }
-
-    @Test
-    public void testAddPointEmptyLogin() throws Exception {
-        userDAO.addPoint("", 0);
     }
 
     @Test

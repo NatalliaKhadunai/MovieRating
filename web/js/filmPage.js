@@ -8,6 +8,8 @@ var statusName;
 var userLogin;
 var filmName;
 
+var symbolsFmtStr;
+
 function changeColorsOver(callingElement) {
     if (mark == -1 || isNaN(mark)) {
         for (var i = 1; i <= 10; i++) {
@@ -22,6 +24,7 @@ function changeColorsOver(callingElement) {
 }
 
 function commentLength(symbolsStr) {
+    symbolsFmtStr = symbolsStr;
     var content = document.getElementById("commentContent").value;
     var numOfSymbols = content.length;
     var numOfSymbolsArea = document.getElementById("numOfSymbols");
@@ -105,6 +108,11 @@ function putComment() {
         catch (e) {
             alert("Unable to connect to server");
         }
+
+        var numOfSymbolsArea = document.getElementById("numOfSymbols");
+        var textNode = document.createTextNode("0 " + symbolsFmtStr);
+        numOfSymbolsArea.innerHTML = "";
+        numOfSymbolsArea.appendChild(textNode);
     }
 }
 

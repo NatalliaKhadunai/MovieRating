@@ -21,7 +21,7 @@ public class UserPageCommand implements ActionCommand {
         userDAO.closeConnection();
         HttpSession session = request.getSession(false);
         User loggedUser = (User)session.getAttribute("loggedUser");
-        if (loggedUser != null && loggedUser.getName().equals(user.getName())) {
+        if (loggedUser != null && loggedUser.getName()!= null && loggedUser.getName().equals(user.getName())) {
             page = Page.LOGGED_USER_PAGE.getPagePath();
         }
         else {

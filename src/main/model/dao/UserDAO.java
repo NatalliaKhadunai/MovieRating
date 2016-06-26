@@ -122,15 +122,14 @@ public class UserDAO extends AbstractDAO {
 
     /**
      * Add points to user status coefficient.
-     * @param login value, that identifies User entity.
+     * @param user entity, that identifies logged user.
      * @param points value to add.
      */
-    public void addPoint(String login, double points) {
-        if (login == null || login.equals("") || points == 0) return;
-        User user = getEntity(login);
+    public void addPoint(User user, double points) {
+        if (user == null || points == 0) return;
         Status userStatus = Status.defineStatus(user.getStatusCoefficient());
         if (userStatus != Status.ADMIN && userStatus != Status.BAN) {
-            user.setStatusCoefficient(user.getStatusCoefficient() + points);
+            user.setStatusCoefficient(Math.rint(10.0 * (user.getStatusCoefficient() + points)) / 10.0);
             updateStatusCoefficient(user);
             if (!user.getStatusName().equals(Status.defineStatus(user.getStatusCoefficient()).name())) {
                 Status newStatus = Status.defineStatus(user.getStatusCoefficient());

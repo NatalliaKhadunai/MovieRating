@@ -27,13 +27,13 @@ public class SearchCommand implements ActionCommand {
         int maxPageNo = resultList.size() / 10 + 1;
         if (resultList.size() > 10) {
             if (request.getParameter("pageNo") == null) {
-                resultList = resultList.subList(0, 10);
+                resultList = resultList.subList(0, 9);
                 request.setAttribute("pageNo", 1);
                 request.setAttribute("maxPageNo", maxPageNo);
             } else {
                 int pageNo = Integer.parseInt(request.getParameter("pageNo"));
-                if (pageNo == maxPageNo) resultList = resultList.subList((pageNo - 1) * 10 + 1, resultList.size() - 1);
-                else resultList = resultList.subList((pageNo - 1) * 10 + 1, (pageNo - 1) * 10 + 11);
+                if (pageNo == maxPageNo) resultList = resultList.subList((pageNo - 1) * 10, resultList.size() - 1);
+                else resultList = resultList.subList((pageNo - 1) * 10, (pageNo - 1) * 10 + 9);
                 request.setAttribute("pageNo", pageNo);
                 request.setAttribute("maxPageNo", maxPageNo);
             }

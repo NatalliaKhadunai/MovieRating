@@ -4,9 +4,11 @@ import main.model.dao.FilmDAO;
 import main.model.dao.MarkDAO;
 import main.model.dao.UserDAO;
 import main.model.entity.Film;
+import main.model.entity.User;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -24,8 +26,10 @@ public class PutFilmMarkCommand implements ActionCommand {
         MarkDAO markDAO = new MarkDAO();
         if (markDAO.getEntity(userLogin, film) == null) {
             markDAO.addEntity(userLogin, film, mark);
+            HttpSession session = request.getSession(false);
+            User user = (User)session.getAttribute("loggedUser");
             UserDAO userDAO = new UserDAO();
-            userDAO.addPoint(userLogin, countPoint(markDAO, film, mark));
+            userDAO.addPoint(user, countPoint(markDAO, film, mark));
             userDAO.closeConnection();
             markDAO.closeConnection();
             updateFilmRating(film);
@@ -78,9 +82,10 @@ public class PutFilmMarkCommand implements ActionCommand {
         double resultPoint = 0;
         int numOfMarks = markDAO.numberOfMarks(film);
         int numOfUsers = getNumberOfUsers();
+        if (numOfMarks==0) numOfMarks = 1;
         double differenceMark = numOfUsers / numOfMarks;
         double avgMark = markDAO.averageMark(film);
-        if (mark >= avgMark - differenceMark || mark <= avgMark + differenceMark) resultPoint = 0.1;
+        if (mark >= avgMark - differenceMark && mark <= avgMark + differenceMark) resultPoint = 0.1;
         else resultPoint = -0.1;
         return resultPoint;
     }
