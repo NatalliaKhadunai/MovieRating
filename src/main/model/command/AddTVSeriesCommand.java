@@ -29,13 +29,14 @@ public class AddTVSeriesCommand implements ActionCommand {
             try {
                 List<FileItem> multiparts = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
                 TVSeries tvSeries = fillInfo(multiparts);
+                savePoster(multiparts, tvSeries);
                 ImageDAO imageDAO = new ImageDAO();
                 imageDAO.addEntity(tvSeries.getPosterFileName());
                 imageDAO.closeConnection();
                 TVSeriesDAO tvSeriesDAO = new TVSeriesDAO();
                 tvSeriesDAO.addEntity(tvSeries);
                 tvSeriesDAO.closeConnection();
-                page = Page.USER_PAGE.getPagePath();
+                page = Page.LOGGED_USER_PAGE.getPagePath();
             } catch (Exception e) {
                 logger.error(e);
             }
@@ -107,8 +108,8 @@ public class AddTVSeriesCommand implements ActionCommand {
                     String[] nameParts = name.split("\\.");
                     String tvseriesName = tvSeries.getName().toLowerCase().replaceAll(" ", "-");
                     String format = nameParts[nameParts.length - 1];
-                    tvSeries.setPosterFileName(tvseriesName + "." + format);
-                    item.write(new File(directory + tvseriesName + "." + format));
+                    tvSeries.setPosterFileName(tvseriesName.hashCode() + name.hashCode() + "." + format);
+                    item.write(new File(directory + tvSeries.getPosterFileName()));
                 }
                 catch (Exception e) {
                     logger.error(e);

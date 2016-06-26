@@ -2,6 +2,7 @@ package main.model.command;
 
 import main.controller.Page;
 import main.model.dao.UserDAO;
+import main.model.entity.Status;
 import main.model.entity.User;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,8 +32,8 @@ public class RegistrationCommand implements ActionCommand {
             user = createUser(login, email, password);
             HttpSession session = request.getSession(false);
             session.setAttribute("isLoggedIn", true);
-            request.setAttribute("user", user);
-            page = Page.USER_PAGE.getPagePath();
+            session.setAttribute("loggedUser", user);
+            page = Page.LOGGED_USER_PAGE.getPagePath();
         }
         return page;
     }
@@ -49,6 +50,8 @@ public class RegistrationCommand implements ActionCommand {
         user.setLogin(login);
         user.setEmail(email);
         user.setPassword(password);
+        user.setStatusCoefficient(Status.minimalStatus().lowerThreshold);
+        user.setStatusName(Status.minimalStatus().name());
         UserDAO userDAO = new UserDAO();
         userDAO.addEntity(user);
         userDAO.closeConnection();

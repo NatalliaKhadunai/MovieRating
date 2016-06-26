@@ -6,13 +6,11 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <meta name="description" content="">
-    <meta name="author" content="">
     <link rel="shortcut icon" href="css/img/icon-transparent.png">
     <title>Movie Rating</title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <script src="js/validateProfileEdit.js"></script>
+    <script src="js/enableDisableElement.js"></script>
 </head>
 <body>
 
@@ -23,19 +21,23 @@
     <div class="row">
         <form class="col-md-3" action="/RatingServlet?requestType=editProfile" method="post" enctype="multipart/form-data" onsubmit="return validate(this);">
             <p><fmt:message key="label.email" bundle="${rb}"/>: </p>
-            <input type="text" name="email" class="form-control" placeholder="<fmt:message key="label.email" bundle="${rb}"/>">
+            <input type="checkbox" name="field" onclick="enable('email')" value="email">
+            <input type="text" name="email" class="form-control" placeholder="<fmt:message key="label.email" bundle="${rb}"/>" disabled>
             <br>
             <p><fmt:message key="label.fullName" bundle="${rb}"/>: </p>
-            <input type="text" name="fullName" class="form-control" placeholder="<fmt:message key="label.fullName" bundle="${rb}"/>">
+            <input type="checkbox" name="field" onclick="enable('fullName')" value="fullName">
+            <input type="text" name="fullName" class="form-control" placeholder="<fmt:message key="label.fullName" bundle="${rb}"/>" disabled>
             <br>
             <p><fmt:message key="label.sex" bundle="${rb}"/>: </p>
-            <select name="sex">
+            <input type="checkbox" name="field" onclick="enable('sex')" value="sex">
+            <select name="sex" disabled>
                 <option>F</option>
                 <option>M</option>
             </select>
             <br>
             <p><fmt:message key="label.profilePhoto" bundle="${rb}"/>: </p>
-            <input type="file" name="profilePhoto">
+            <input type="checkbox" name="field" onclick="enable('profilePhoto')" value="profilePhoto">
+            <input type="file" name="profilePhoto" disabled>
             <br>
             <input type="submit" name="submit" class="btn btn-lg btn-primary btn-block" value="<fmt:message key="button.add" bundle="${rb}"/>">
         </form>

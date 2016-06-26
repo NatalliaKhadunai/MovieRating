@@ -31,6 +31,19 @@ public class ImageDAO extends AbstractDAO {
         }
     }
 
+    public void removeEntity(String fileName) {
+        if (fileName == null || fileName.equals("")) return;
+        try {
+            PreparedStatement statement = connection.prepareStatement(QueryManager.getProperty("imageDAO.removeEntity"));
+            statement.setString(1, fileName);
+            statement.executeUpdate();
+            statement.close();
+        }
+        catch (SQLException e) {
+            logger.error(e);
+        }
+    }
+
     /**
      * Form home slider image list.
      * @return List with filenames of images.

@@ -20,11 +20,12 @@
 
 <%@ include file="navbar.jsp"%>
 
-<div class="container-form">
+<div class="container">
 
     <div class="row">
-        <form class="col-md-3 form-signup" action="/RatingServlet?requestType=Registration" method="post" onsubmit="return validate(this);">
+        <form class="col-md-3" action="/RatingServlet?requestType=Registration" method="post" onsubmit="return validate(this);">
             <h2 class="form-signin-heading" style="text-align: center;"><fmt:message key="label.pleaseEnterInfoForSignUp" bundle="${rb}"/></h2>
+            <br>
             <label><fmt:message key="label.login" bundle="${rb}"/>:</label>
             <c:choose>
                 <c:when test="${requestScope.loginExists eq true}">
@@ -35,8 +36,10 @@
                     <input type="text" name="login" class="form-control" placeholder="<fmt:message key="label.login" bundle="${rb}"/>" required autofocus>
                 </c:when>
             </c:choose>
+            <br>
             <label><fmt:message key="label.email" bundle="${rb}"/>:</label>
             <input type="email" name="email" class="form-control" placeholder="<fmt:message key="label.email" bundle="${rb}"/>" required autofocus>
+            <br>
             <label><fmt:message key="label.password" bundle="${rb}"/>:</label>
             <input type="password" name="password" class="form-control" placeholder="<fmt:message key="label.password" bundle="${rb}"/>" required>
             <br>

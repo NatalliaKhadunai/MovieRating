@@ -58,8 +58,10 @@ public class UserDAO extends AbstractDAO {
             preparedStatement.setString(2, user.getEmail());
             preparedStatement.setInt(3, user.getPassword());
             preparedStatement.setDouble(4, Status.minimalStatus().lowerThreshold);
+            preparedStatement.setInt(5, Status.minimalStatus().ordinal() + 1);
             preparedStatement.executeUpdate();
             preparedStatement.close();
+            user.setProfilePhoto(defineProfilePhotoBySex(user.getSex()));
         }
         catch (SQLException e) {
             logger.error(e);

@@ -1,7 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<html lang="en"><head>
+<html>
+<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,18 +13,18 @@
     <link href="css/formSignUp.css" rel="stylesheet">
     <script src="js/jquery-2.2.3.js"></script>
     <script src="js/bootstrap.js"></script>
-
 </head>
 
 <body>
 
 <%@ include file="navbar.jsp"%>
 
-<div class="container-form">
+<div class="container">
 
     <div class="row">
-        <form class="col-md-3 form-signup" action="/RatingServlet?requestType=changePassword" method="post">
+        <form class="col-md-4" action="/RatingServlet?requestType=changePassword" method="post">
             <h2>Specify old and new passwords</h2>
+            <br>
             <label><fmt:message key="label.oldPassword" bundle="${rb}"/>:</label>
             <c:choose>
                 <c:when test="${requestScope.incorrectPassword eq true}">
@@ -36,6 +37,7 @@
                     <input type="password" name="oldPassword" class="form-control" placeholder="<fmt:message key="label.oldPassword" bundle="${rb}"/>" required>
                 </c:when>
             </c:choose>
+            <br>
             <label><fmt:message key="label.newPassword" bundle="${rb}"/>:</label>
             <input type="password" name="newPassword" class="form-control" placeholder="<fmt:message key="label.newPassword" bundle="${rb}"/>" required>
             <br>
@@ -49,7 +51,7 @@
     </footer>
 </div> <!-- /container -->
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="js/jquery-2.2.3.js"></script>
 <script>window.jQuery || document.write('<script src="js/jquery-2.2.3.js"><\/script>')</script>
 <script src="js/bootstrap.min.js"></script>
 

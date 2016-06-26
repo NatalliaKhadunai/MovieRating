@@ -7,16 +7,16 @@ import java.util.EnumSet;
  */
 
 public enum Status {
+    /** Constant for representing gold (third level) status. */
+    GOLD(3,3.9),
+    /** Constant for representing silver (second level) status. */
+    SILVER(2,2.9),
+    /** Constant for representing bronze (first level) status. */
+    BRONZE(1,1.9),
     /** Constant for representing baned status. */
     BAN(-1,-1),
     /** Constant for representing administrator status. */
-    ADMIN(0,0),
-    /** Constant for representing bronze (first level) status. */
-    BRONZE(1,1.9),
-    /** Constant for representing silver (second level) status. */
-    SILVER(2,2.9),
-    /** Constant for representing gold (third level) status. */
-    GOLD(3,3.9);
+    ADMIN(0,0);
 
     /** {@code Status} lower threshold coefficient */
     public final double lowerThreshold;

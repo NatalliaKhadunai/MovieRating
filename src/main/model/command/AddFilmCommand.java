@@ -31,13 +31,14 @@ public class AddFilmCommand implements ActionCommand {
             try {
                 List<FileItem> multiparts = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
                 Film film = fillInfo(multiparts);
+                savePoster(multiparts, film);
                 ImageDAO imageDAO = new ImageDAO();
                 imageDAO.addEntity(film.getPosterFileName());
                 imageDAO.closeConnection();
                 FilmDAO filmDAO = new FilmDAO();
                 filmDAO.addEntity(film);
                 filmDAO.closeConnection();
-                page = Page.USER_PAGE.getPagePath();
+                page = Page.LOGGED_USER_PAGE.getPagePath();
             } catch (FileUploadException e) {
                 logger.error(e);
             }
@@ -101,8 +102,8 @@ public class AddFilmCommand implements ActionCommand {
                     String[] nameParts = name.split("\\.");
                     String format = nameParts[nameParts.length - 1];
                     String filmName = film.getName().toLowerCase().replaceAll(" ", "-");
-                    film.setPosterFileName(filmName + "." + format);
-                    item.write(new File(directory + File.separator + filmName + "." + format));
+                    film.setPosterFileName(filmName.hashCode() + name.hashCode() + "." + format);
+                    item.write(new File(directory + File.separator + film.getPosterFileName()));
                 }
                 catch (Exception e) {
                     logger.error(e);

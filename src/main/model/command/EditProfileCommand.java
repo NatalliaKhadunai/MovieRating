@@ -29,12 +29,12 @@ public class EditProfileCommand implements ActionCommand {
             try {
                 List<FileItem> multiparts = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
                 UserDAO userDAO = new UserDAO();
-                User user = userDAO.getEntity(((User) request.getSession(false).getAttribute("loggedUser")).getLogin());
+                User user = (User) request.getSession(false).getAttribute("loggedUser");
                 List<ProfileField> updatedFields = setUpdatedFields(multiparts, user);
                 saveProfilePhoto(multiparts, user);
                 userDAO.updateEntity(user, updatedFields);
                 userDAO.closeConnection();
-                page = Page.USER_PAGE.getPagePath();
+                page = Page.LOGGED_USER_PAGE.getPagePath();
             }
             catch (Exception  e) {
                 logger.error(e);
