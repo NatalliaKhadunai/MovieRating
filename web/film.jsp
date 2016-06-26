@@ -37,7 +37,10 @@
 
     <div class="row" style="margin-top: 85px;">
         <h3><fmt:message key="label.leaveYourComment" bundle="${rb}"/></h3>
-        <textarea class="form-control" class="col-md-4" name="commentContent" id="commentContent"></textarea>
+        <textarea class="form-control" class="col-md-4" name="commentContent" id="commentContent" onkeyup="commentLength('<fmt:message key="label.symbols" bundle="${rb}"/>')"></textarea>
+        <br>
+        <span id="numOfSymbols">0 <fmt:message key="label.symbols" bundle="${rb}"/></span>
+        <br>
         <br>
         <button class="btn btn-primary" onclick="putComment()">
             <fmt:message key="button.addComment" bundle="${rb}"/>

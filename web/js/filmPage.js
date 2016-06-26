@@ -21,6 +21,15 @@ function changeColorsOver(callingElement) {
     }
 }
 
+function commentLength(symbolsStr) {
+    var content = document.getElementById("commentContent").value;
+    var numOfSymbols = content.length;
+    var numOfSymbolsArea = document.getElementById("numOfSymbols");
+    var textNode = document.createTextNode(numOfSymbols + " " + symbolsStr);
+    numOfSymbolsArea.innerHTML = "";
+    numOfSymbolsArea.appendChild(textNode);
+}
+
 function putMark(element) {
     if (isLoggedIn == 'false') {
         alert("You're not logged in!");
@@ -69,6 +78,10 @@ function putComment() {
     var content = document.getElementById("commentContent").value;
     if (content.replace("\s") == '') {
         alert("Comment should contain text!");
+        return;
+    }
+    if (content.length > 1000) {
+        alert("Comment shouldn't contain more than 1000 symbols!");
         return;
     }
     else {
