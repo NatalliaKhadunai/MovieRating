@@ -8,18 +8,26 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
 
 /**
  * Class {@code AbstractDAO} is a root class for all the DAO objects in the system.
  */
 
 public abstract class AbstractDAO{
-    /** Logger for all the DAO objects in the system. */
+    /**
+     * Logger for all the DAO objects in the system.
+     * {@see org.apache.log4j.Logger}
+     * */
     protected final static Logger logger = Logger.getLogger("DAOLogger");
-    /** DataSource object, from which Connection object are taken. */
+    /**
+     * DataSource object, from which Connection object are taken.
+     * {@see javax.sql.DataSource}
+     * */
     private static DataSource ds = null;
-    /** JDBC Connection. */
+    /**
+     *  JDBC Connection.
+     * {@see java.sql.Connection}
+     * */
     protected Connection connection;
 
     static {

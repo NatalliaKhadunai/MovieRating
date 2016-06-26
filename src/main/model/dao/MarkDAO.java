@@ -11,6 +11,7 @@ import java.sql.SQLException;
 
 /**
  * Class {@code MaarkDAO} is a class, with the help of which data about marks is extracted from database.
+ * {@see main.model.entity.Mark}
  */
 
 public class MarkDAO extends AbstractDAO {

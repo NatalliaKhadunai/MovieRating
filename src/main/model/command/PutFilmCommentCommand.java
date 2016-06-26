@@ -8,12 +8,14 @@ import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * Command to put film comment.
@@ -30,7 +32,8 @@ public class PutFilmCommentCommand implements ActionCommand {
         Timestamp date = defineDateTime(Long.valueOf(request.getParameter("date")));
         addComment(filmName, login, content, date);
         Timestamp dateLastModified = defineDateTime(Long.valueOf(request.getParameter("lastModified")));
-        String resultComment = recentComments(filmName, dateLastModified);
+        Locale locale = defineLocale(request);
+        String resultComment = recentComments(filmName, dateLastModified, locale);
 
         response.setContentType("application/xml");
         response.setCharacterEncoding("UTF-8");
@@ -79,13 +82,20 @@ public class PutFilmCommentCommand implements ActionCommand {
      * @param dateLastModified time border.
      * @return String value in XML-format, that contains info about found comments.
      */
-    private String recentComments(String filmName, Timestamp dateLastModified) {
+    private String recentComments(String filmName, Timestamp dateLastModified, Locale locale) {
         FilmDAO filmDAO = new FilmDAO();
         Film film = filmDAO.getEntity(filmName);
         filmDAO.closeConnection();
         CommentDAO commentDAO = new CommentDAO();
-        String resultComment = commentDAO.getLatestComments(film, dateLastModified);
+        String resultComment = commentDAO.getLatestComments(film, dateLastModified, locale);
         commentDAO.closeConnection();
         return resultComment;
+    }
+
+    private Locale defineLocale(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        String localeStr = (String)session.getAttribute("locale");
+        Locale locale = new Locale(localeStr.toLowerCase(), localeStr.toUpperCase());
+        return locale;
     }
 }

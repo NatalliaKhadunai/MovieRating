@@ -4,18 +4,28 @@ import main.model.manager.QueryManager;
 import main.model.entity.Comment;
 import main.model.entity.Film;
 import main.model.entity.TVSeries;
-import main.controller.RequestType;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.StringWriter;
 import java.sql.*;
 import java.text.DateFormat;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 /**
  * Class {@code CommentDAO} is a class, with the help of which data about comments is extracted from database.
+ * {@see main.model.entity.Comment}
  */
 
 public class CommentDAO extends AbstractDAO {
@@ -142,13 +152,13 @@ public class CommentDAO extends AbstractDAO {
      * @param date represents time border.
      * @return String value in XML-format, that contains info about found comments.
      */
-    public String getLatestComments(Film film, Timestamp date) {
+    public String getLatestComments(Film film, Timestamp date, Locale locale) {
         String result = null;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(QueryManager.getProperty("commentDAO.getLatestComments_Film"));
             preparedStatement.setString(1, date.toString());
             ResultSet resultSet = preparedStatement.executeQuery();
-            result = commentsToXML(resultSet);
+            result = commentsToXML(resultSet, locale);
             preparedStatement.close();
         }
         catch (SQLException e) {
@@ -165,13 +175,13 @@ public class CommentDAO extends AbstractDAO {
      * @param date represents time border.
      * @return String value in XML-format, that contains info about found comments.
      */
-    public String getLatestComments(TVSeries tvSeries, Timestamp date) {
+    public String getLatestComments(TVSeries tvSeries, Timestamp date, Locale locale) {
         String result = null;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(QueryManager.getProperty("commentDAO.getLatestComments_TVSeries"));
             preparedStatement.setString(1, date.toString());
             ResultSet resultSet = preparedStatement.executeQuery();
-            result = commentsToXML(resultSet);
+            result = commentsToXML(resultSet, locale);
             preparedStatement.close();
         }
         catch (SQLException e) {
@@ -183,29 +193,62 @@ public class CommentDAO extends AbstractDAO {
     }
 
     /**
-     *
-     * @param resultSet
-     * @return
+     * Return string in xml-format, that represents set of comments.
+     * @param resultSet set of data.
+     * @return string in xml-format, that represents set of comments
      */
-    private String commentsToXML(ResultSet resultSet) {
-        String result = "<?xml version=\"1.0\"?><comments>";
+    private String commentsToXML(ResultSet resultSet, Locale locale) {
+        DocumentBuilderFactory dFact = DocumentBuilderFactory.newInstance();
+        DocumentBuilder build = null;
+        try {
+            build = dFact.newDocumentBuilder();
+        }
+        catch (ParserConfigurationException e) {
+            logger.error(e);
+        }
+        Document doc = build.newDocument();
+        Element root = doc.createElement("comments");
+        doc.appendChild(root);
         try {
             while (resultSet.next()) {
-                result += "<comment>";
-                result += "<userLogin>" + resultSet.getString("UserLogin") + "</userLogin>";
-                result += "<content>" + resultSet.getString("Content") + "</content>";
-                DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.ENGLISH);
-                DateFormat tf = DateFormat.getTimeInstance(DateFormat.SHORT, Locale.ENGLISH);
+                Element member = doc.createElement("comment");
+                root.appendChild(member);
+                Element name = doc.createElement("userLogin");
+                name.appendChild(doc.createTextNode(resultSet.getString("UserLogin")));
+                member.appendChild(name);
+                Element content = doc.createElement("content");
+                content.appendChild(doc.createTextNode(resultSet.getString("Content")));
+                member.appendChild(content);
+                DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+                DateFormat tf = DateFormat.getTimeInstance(DateFormat.SHORT, locale);
                 String formattedDate = df.format(resultSet.getTimestamp("Date"));
                 String formattedTime = tf.format(resultSet.getTimestamp("Date"));
-                result += "<date>" + formattedDate + " " + formattedTime + "</date>";
-                result += "</comment>";
+                Element dateTime = doc.createElement("date");
+                dateTime.appendChild(doc.createTextNode(formattedDate + " " + formattedTime));
+                member.appendChild(dateTime);
+
             }
         }
         catch (SQLException e) {
             logger.error(e);
         }
-        result += "</comments>";
-        return result;
+        TransformerFactory tFact = TransformerFactory.newInstance();
+        Transformer trans = null;
+        try {
+            trans = tFact.newTransformer();
+        }
+        catch (TransformerConfigurationException e) {
+            logger.error(e);
+        }
+        StringWriter writer = new StringWriter();
+        StreamResult streamResult = new StreamResult(writer);
+        DOMSource source = new DOMSource(doc);
+        try {
+            trans.transform(source, streamResult);
+        }
+        catch (TransformerException e) {
+            logger.error(e);
+        }
+        return writer.toString();
     }
 }

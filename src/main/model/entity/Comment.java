@@ -7,13 +7,19 @@ import java.sql.Date;
  */
 
 public class Comment {
-    /** Film ID that identifies film, to which comment was left */
+    /**
+     * Film ID that identifies film, to which comment was left
+     * {@see main.model.entity.Film}
+     * */
     private int FilmID;
-    /** User login that identifies user, who left comment */
+    /**
+     * User login that identifies user, who left comment
+     * {@see main.model.entity.User}
+     * */
     private String userLogin;
     /** {@code Comment} content */
     private String content;
-    /** Date, when comment was left */
+    /** {@link java.sql.Date}, when comment was left */
     private Date date;
 
     /**
@@ -78,5 +84,28 @@ public class Comment {
      */
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Comment)) return false;
+
+        Comment comment = (Comment) o;
+
+        if (FilmID != comment.FilmID) return false;
+        if (!userLogin.equals(comment.userLogin)) return false;
+        if (!content.equals(comment.content)) return false;
+        return date.equals(comment.date);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = FilmID;
+        result = 31 * result + userLogin.hashCode();
+        result = 31 * result + content.hashCode();
+        result = 31 * result + date.hashCode();
+        return result;
     }
 }

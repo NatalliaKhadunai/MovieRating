@@ -59,4 +59,27 @@ public class TVSeries extends VideoProduct {
     public void setNumOfSeasons(int numOfSeasons) {
         this.numOfSeasons = numOfSeasons;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TVSeries)) return false;
+        if (!super.equals(o)) return false;
+
+        TVSeries tvSeries = (TVSeries) o;
+
+        if (releaseYear != tvSeries.releaseYear) return false;
+        if (endYear != tvSeries.endYear) return false;
+        return numOfSeasons == tvSeries.numOfSeasons;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + releaseYear;
+        result = 31 * result + endYear;
+        result = 31 * result + numOfSeasons;
+        return result;
+    }
 }

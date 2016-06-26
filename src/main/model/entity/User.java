@@ -149,4 +149,38 @@ public class User {
     public void setSex(char sex) {
         this.sex = sex;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+
+        User user = (User) o;
+
+        if (password != user.password) return false;
+        if (Double.compare(user.statusCoefficient, statusCoefficient) != 0) return false;
+        if (sex != user.sex) return false;
+        if (!login.equals(user.login)) return false;
+        if (!email.equals(user.email)) return false;
+        if (name != null ? !name.equals(user.name) : user.name != null) return false;
+        if (profilePhoto != null ? !profilePhoto.equals(user.profilePhoto) : user.profilePhoto != null) return false;
+        return status == user.status;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        result = login.hashCode();
+        result = 31 * result + email.hashCode();
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + password;
+        result = 31 * result + (profilePhoto != null ? profilePhoto.hashCode() : 0);
+        temp = Double.doubleToLongBits(statusCoefficient);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + status.hashCode();
+        result = 31 * result + (int) sex;
+        return result;
+    }
 }

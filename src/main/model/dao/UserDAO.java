@@ -13,6 +13,7 @@ import java.util.List;
 
 /**
  * Class {@code UserDAO} is a class, with the help of which data about users is extracted from database.
+ * {@see main.model.entity.User}
  */
 
 public class UserDAO extends AbstractDAO {

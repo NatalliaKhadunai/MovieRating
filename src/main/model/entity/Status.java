@@ -30,7 +30,7 @@ public enum Status {
 
     /**
      * Return minimal status (first level status) in the system.
-     * @return constant for representing bronze (first level) status.
+     * @return constant value for representing bronze (first level) status.
      */
     public static Status minimalStatus() {
         return BRONZE;
@@ -38,7 +38,7 @@ public enum Status {
 
     /**
      * Return maximum status in the system.
-     * @return constant for representing gold (third level) status.
+     * @return constant value for representing gold (third level) status.
      */
     public static Status maximumStatus() {
         return GOLD;
@@ -46,7 +46,7 @@ public enum Status {
 
     /**
      * Return administrator status in the system.
-     * @return constant for representing bronze (first level) status.
+     * @return constant value for representing bronze (first level) status.
      */
     public static Status adminStatus() {
         return ADMIN;
@@ -54,7 +54,7 @@ public enum Status {
 
     /**
      * Return baned status in the system.
-     * @return constant for representing baned status.
+     * @return constant value for representing baned status.
      */
     public static Status banedStatus() {
         return BAN;

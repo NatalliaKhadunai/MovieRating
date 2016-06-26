@@ -4,7 +4,7 @@ package main.model.entity;
  * and {@link main.model.entity.TVSeries} classes.
  */
 
-public class VideoProduct implements Comparable<VideoProduct> {
+public class VideoProduct {
     /** The value is used to identify {@code VideoProduct} object */
     protected int ID;
     /** {@code VideoProduct} name */
@@ -114,20 +114,30 @@ public class VideoProduct implements Comparable<VideoProduct> {
         this.numOfComments = numOfComments;
     }
 
-    /**
-     * Compares two {@code VideoProduct} objects by number of comments.
-     * @param product the {@code VideoProduct} object to be compared.
-     * @return the value {@code 0} if the argument object is equal to
-     *          this object; a value less than {@code 0} if this object
-     *          has less comments than the argument object; and a
-     *          value greater than {@code 0} if this object has
-     *          more comments than the argument object.
-     */
     @Override
-    public int compareTo(VideoProduct product) {
-        VideoProduct videoProduct = (VideoProduct) product;
-        if (this.numOfComments > videoProduct.numOfComments) return -1;
-        if (this.numOfComments < videoProduct.numOfComments) return 1;
-        else return 0;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof VideoProduct)) return false;
+
+        VideoProduct that = (VideoProduct) o;
+
+        if (ID != that.ID) return false;
+        if (Float.compare(that.rating, rating) != 0) return false;
+        if (numOfComments != that.numOfComments) return false;
+        if (!name.equals(that.name)) return false;
+        if (description != null ? !description.equals(that.description) : that.description != null) return false;
+        return posterFileName != null ? posterFileName.equals(that.posterFileName) : that.posterFileName == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = ID;
+        result = 31 * result + name.hashCode();
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (rating != +0.0f ? Float.floatToIntBits(rating) : 0);
+        result = 31 * result + (posterFileName != null ? posterFileName.hashCode() : 0);
+        result = 31 * result + numOfComments;
+        return result;
     }
 }

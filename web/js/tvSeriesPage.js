@@ -121,11 +121,11 @@ function getInfo(){
     }
 }
 
-function initialization(isLoggedInVar, statusNameVar, userLoginVar, filmNameVar) {
+function initialization(isLoggedInVar, statusNameVar, userLoginVar, tvseriesNameVar) {
     isLoggedIn = isLoggedInVar;
     statusName = statusNameVar;
     userLogin = userLoginVar;
-    filmName = filmNameVar;
+    tvseriesName = tvseriesNameVar;
     var element = document.getElementById("1");
     for (var i=2;i<=10;i++) {
         var copyElement = element.cloneNode();

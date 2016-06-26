@@ -14,6 +14,7 @@ import java.util.List;
 
 /**
  * Class {@code FilmDAO} is a class, with the help of which data about films is extracted from database.
+ * {@see main.model.entity.Film}
  */
 
 public class FilmDAO extends AbstractDAO {

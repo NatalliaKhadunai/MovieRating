@@ -13,6 +13,7 @@ import java.util.List;
 
 /**
  * Class {@code TVSeriesDAO} is a class, with the help of which data about tvSeries is extracted from database.
+ * {@see main.model.entity.TVSeries}
  */
 
 public class TVSeriesDAO extends AbstractDAO {

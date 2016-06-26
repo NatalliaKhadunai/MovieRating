@@ -1,6 +1,7 @@
 package main.model.command;
 
 import main.controller.Page;
+import main.model.VideoProductComparatorByComment;
 import main.model.manager.PathsManager;
 import main.model.dao.FilmDAO;
 import main.model.dao.ImageDAO;
@@ -47,7 +48,7 @@ public class EmptyCommand implements ActionCommand {
         List<VideoProduct> videoProductList = new ArrayList<>();
         videoProductList.addAll(films);
         videoProductList.addAll(tvseries);
-        Collections.sort(videoProductList);
+        Collections.sort(videoProductList, new VideoProductComparatorByComment());
         List<VideoProduct> resultList = videoProductList.subList(0,3);
         return resultList;
     }
