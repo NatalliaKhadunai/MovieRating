@@ -1,11 +1,15 @@
 package main.controller;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.*;
+import java.util.Enumeration;
+import java.util.ResourceBundle;
 
 import main.model.command.ActionCommand;
+import org.apache.log4j.Logger;
 
 /**
  * Class, that represents main controller of the system.
@@ -13,6 +17,7 @@ import main.model.command.ActionCommand;
 
 @WebServlet(name = "RatingServlet")
 public class RatingServlet extends HttpServlet {
+    private final static Logger logger = Logger.getLogger("rootLogger");
 
     /**
      * Method that handles "post" requests.
@@ -49,7 +54,8 @@ public class RatingServlet extends HttpServlet {
         ActionCommand command = client.defineCommand(request);
         String page = command.execute(request, response);
         if (page != null) {
-            if (page.equals(Page.SERVICE_SERVLET.getPagePath())) response.sendRedirect(page);
+            if (page.equals(Page.SERVICE_SERVLET.getPagePath()) ||
+                    page.equals(Page.LOGGED_USER_PAGE.getPagePath())) response.sendRedirect(page);
             else getServletContext().getRequestDispatcher(page).forward(request, response);
         }
     }

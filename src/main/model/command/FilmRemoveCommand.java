@@ -4,6 +4,7 @@ import main.controller.Page;
 import main.model.dao.FilmDAO;
 import main.model.dao.ImageDAO;
 import main.model.entity.Film;
+import main.model.manager.ImageManager;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,6 +26,7 @@ public class FilmRemoveCommand implements ActionCommand {
         ImageDAO imageDAO = new ImageDAO();
         imageDAO.removeEntity(film.getPosterFileName());
         imageDAO.closeConnection();
+        ImageManager.removePoster(film);
         page = Page.SERVICE_SERVLET.getPagePath() + "?requestType=filmList";
         return page;
     }

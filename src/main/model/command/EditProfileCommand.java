@@ -1,11 +1,14 @@
 package main.model.command;
 
 import main.controller.Page;
+import main.model.exception.ImageFormatException;
+import main.model.manager.ImageManager;
 import main.model.manager.PathsManager;
 import main.model.dao.UserDAO;
 import main.model.entity.User;
 import main.ProfileField;
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
@@ -25,28 +28,29 @@ public class EditProfileCommand implements ActionCommand {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         String page = null;
-        if(ServletFileUpload.isMultipartContent(request)) {
+        if (ServletFileUpload.isMultipartContent(request)) {
+            List<FileItem> multiparts = null;
             try {
-                List<FileItem> multiparts = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
+                multiparts = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
+            }
+            catch (FileUploadException e) {
+                logger.error(e);
+            }
                 UserDAO userDAO = new UserDAO();
                 User user = (User) request.getSession(false).getAttribute("loggedUser");
                 List<ProfileField> updatedFields = setUpdatedFields(multiparts, user);
-                saveProfilePhoto(multiparts, user);
                 userDAO.updateEntity(user, updatedFields);
                 userDAO.closeConnection();
                 page = Page.LOGGED_USER_PAGE.getPagePath();
-            }
-            catch (Exception  e) {
-                logger.error(e);
-            }
         }
         return page;
     }
 
     /**
      * Define fields to update.
+     *
      * @param multiparts incoming data.
-     * @param user entity to update.
+     * @param user       entity to update.
      * @return List with fields to update.
      */
     private List<ProfileField> setUpdatedFields(List<FileItem> multiparts, User user) {
@@ -75,38 +79,16 @@ public class EditProfileCommand implements ActionCommand {
                             break;
                         }
                     }
-                }
-                catch (UnsupportedEncodingException e) {
+                } catch (UnsupportedEncodingException e) {
                     logger.error(e);
                 }
+            } else {
+                ImageManager.saveProfilePhoto(item, user);
+                updatedFields.add(ProfileField.PROFILE_PHOTO);
             }
         }
         return updatedFields;
     }
 
-    /**
-     * Save profile photo.
-     * @param multiparts incoming data.
-     * @param user entity to update.
-     */
-    private void saveProfilePhoto(List<FileItem> multiparts, User user) {
-        String directory = PathsManager.getProperty("userProfilePhotos");
-        for (FileItem item : multiparts) {
-            if (!item.isFormField()) {
-                try {
-                    String name = new String(item.getName().getBytes("ISO-8859-1"), "UTF-8");
-                    if (name.length() != 0) {
-                        String[] nameParts = name.split("\\.");
-                        String format = nameParts[nameParts.length - 1];
-                        File file = new File(directory + user.getLogin() + "." + format);
-                        if (file.exists()) file.delete();
-                        item.write(new File(directory + user.getLogin() + "." + format));
-                    }
-                }
-                catch (Exception e) {
-                    logger.error(e);
-                }
-            }
-        }
-    }
+
 }

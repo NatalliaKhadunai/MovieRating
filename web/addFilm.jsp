@@ -29,7 +29,7 @@
             <textarea name="description" class="form-control" placeholder="<fmt:message key="label.description" bundle="${rb}"/>" required></textarea>
             <br>
             <p><fmt:message key="label.rating" bundle="${rb}"/>: </p>
-            <input type="text" name="rating" class="form-control" placeholder="<fmt:message key="label.rating" bundle="${rb}"/>">
+            <input type="text" name="rating" class="form-control" placeholder="<fmt:message key="label.rating" bundle="${rb}"/>" required>
             <br>
             <p><fmt:message key="label.poster" bundle="${rb}"/>: </p>
             <input type="file" name="poster" id="poster" required>

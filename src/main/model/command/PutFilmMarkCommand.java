@@ -26,10 +26,11 @@ public class PutFilmMarkCommand implements ActionCommand {
         MarkDAO markDAO = new MarkDAO();
         if (markDAO.getEntity(userLogin, film) == null) {
             markDAO.addEntity(userLogin, film, mark);
+            markDAO.closeConnection();
             HttpSession session = request.getSession(false);
             User user = (User)session.getAttribute("loggedUser");
             UserDAO userDAO = new UserDAO();
-            userDAO.addPoint(user, countPoint(markDAO, film, mark));
+            userDAO.addPoint(user, countPoint(film, mark));
             userDAO.closeConnection();
             markDAO.closeConnection();
             updateFilmRating(film);
@@ -73,20 +74,21 @@ public class PutFilmMarkCommand implements ActionCommand {
 
     /**
      * Define how many points should be user status coefficient increased or decreased.
-     * @param markDAO DAO for mark table.
      * @param film entity, which was estimated.
      * @param mark value.
      * @return counted points.
      */
-    private double countPoint(MarkDAO markDAO, Film film, int mark) {
+    private double countPoint(Film film, int mark) {
         double resultPoint = 0;
+        MarkDAO markDAO = new MarkDAO();
         int numOfMarks = markDAO.numberOfMarks(film);
         int numOfUsers = getNumberOfUsers();
         if (numOfMarks==0) numOfMarks = 1;
         double differenceMark = numOfUsers / numOfMarks;
-        double avgMark = markDAO.averageMark(film);
+        double avgMark = film.getRating();
         if (mark >= avgMark - differenceMark && mark <= avgMark + differenceMark) resultPoint = 0.1;
         else resultPoint = -0.1;
+        markDAO.closeConnection();
         return resultPoint;
     }
 }

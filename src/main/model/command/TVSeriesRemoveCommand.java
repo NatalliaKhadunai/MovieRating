@@ -4,9 +4,11 @@ import main.controller.Page;
 import main.model.dao.ImageDAO;
 import main.model.dao.TVSeriesDAO;
 import main.model.entity.TVSeries;
+import main.model.manager.ImageManager;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.awt.*;
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -25,6 +27,7 @@ public class TVSeriesRemoveCommand implements ActionCommand {
         ImageDAO imageDAO = new ImageDAO();
         imageDAO.removeEntity(tvSeries.getPosterFileName());
         imageDAO.closeConnection();
+        ImageManager.removePoster(tvSeries);
         page = Page.SERVICE_SERVLET + "?requestType=tvseriesList";
         return page;
     }

@@ -1,6 +1,8 @@
 package main.model.command;
 
 import main.controller.Page;
+import main.model.exception.ImageFormatException;
+import main.model.manager.ImageManager;
 import main.model.manager.PathsManager;
 import main.FilmField;
 import main.model.dao.FilmDAO;
@@ -27,21 +29,22 @@ public class AddFilmCommand implements ActionCommand {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         String page = null;
-        if(ServletFileUpload.isMultipartContent(request)){
+        if (ServletFileUpload.isMultipartContent(request)) {
+            List<FileItem> multiparts = null;
             try {
-                List<FileItem> multiparts = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
-                Film film = fillInfo(multiparts);
-                savePoster(multiparts, film);
-                ImageDAO imageDAO = new ImageDAO();
-                imageDAO.addEntity(film.getPosterFileName());
-                imageDAO.closeConnection();
-                FilmDAO filmDAO = new FilmDAO();
-                filmDAO.addEntity(film);
-                filmDAO.closeConnection();
-                page = Page.LOGGED_USER_PAGE.getPagePath();
+                multiparts = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
             } catch (FileUploadException e) {
                 logger.error(e);
             }
+            Film film = fillInfo(multiparts);
+            ImageManager.savePoster(multiparts, film);
+            ImageDAO imageDAO = new ImageDAO();
+            imageDAO.addEntity(film.getPosterFileName());
+            imageDAO.closeConnection();
+            FilmDAO filmDAO = new FilmDAO();
+            filmDAO.addEntity(film);
+            filmDAO.closeConnection();
+            page = Page.LOGGED_USER_PAGE.getPagePath();
         }
         return page;
     }
@@ -86,29 +89,5 @@ public class AddFilmCommand implements ActionCommand {
             }
         }
         return film;
-    }
-
-    /**
-     * Save film poster.
-     * @param multiparts incoming data.
-     * @param film entity.
-     */
-    private void savePoster(List<FileItem> multiparts, Film film) {
-        String directory = PathsManager.getProperty("posters");
-        for(FileItem item : multiparts){
-            if(!item.isFormField()) {
-                try {
-                    String name = new String(item.getName().getBytes("ISO-8859-1"), "UTF-8");
-                    String[] nameParts = name.split("\\.");
-                    String format = nameParts[nameParts.length - 1];
-                    String filmName = film.getName().toLowerCase().replaceAll(" ", "-");
-                    film.setPosterFileName(filmName.hashCode() + name.hashCode() + "." + format);
-                    item.write(new File(directory + File.separator + film.getPosterFileName()));
-                }
-                catch (Exception e) {
-                    logger.error(e);
-                }
-            }
-        }
     }
 }

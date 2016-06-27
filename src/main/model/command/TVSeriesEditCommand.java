@@ -1,11 +1,14 @@
 package main.model.command;
 
 import main.controller.Page;
+import main.model.exception.ImageFormatException;
+import main.model.manager.ImageManager;
 import main.model.manager.PathsManager;
 import main.model.dao.TVSeriesDAO;
 import main.model.entity.TVSeries;
 import main.TVSeriesField;
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
@@ -22,20 +25,21 @@ public class TVSeriesEditCommand implements ActionCommand {
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         String page = null;
         int tvseriesID = Integer.valueOf(request.getParameter("tvseriesID"));
-        if(ServletFileUpload.isMultipartContent(request)){
+        if(ServletFileUpload.isMultipartContent(request)) {
+            List<FileItem> multiparts = null;
             try {
-                List<FileItem> multiparts = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
-                TVSeriesDAO tvSeriesDAO = new TVSeriesDAO();
-                TVSeries tvSeries = tvSeriesDAO.getEntity(tvseriesID);
-                List<TVSeriesField> updatedFields = getUpdatedFields(multiparts);
-                updateFields(multiparts, updatedFields, tvSeries);
-                savePoster(multiparts, tvSeries);
-                tvSeriesDAO.updateEntity(tvSeries, updatedFields);
-                tvSeriesDAO.closeConnection();
-                page = Page.SERVICE_SERVLET.getPagePath() + "?requestType=tvseriesList";
-            } catch (Exception e) {
+                multiparts = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
+            } catch (FileUploadException e) {
                 logger.error(e);
             }
+            TVSeriesDAO tvSeriesDAO = new TVSeriesDAO();
+            TVSeries tvSeries = tvSeriesDAO.getEntity(tvseriesID);
+            List<TVSeriesField> updatedFields = getUpdatedFields(multiparts);
+            updateFields(multiparts, updatedFields, tvSeries);
+            ImageManager.savePoster(multiparts, tvSeries);
+            tvSeriesDAO.updateEntity(tvSeries, updatedFields);
+            tvSeriesDAO.closeConnection();
+            page = Page.SERVICE_SERVLET.getPagePath() + "?requestType=tvseriesList";
         }
         return page;
     }
@@ -106,30 +110,6 @@ public class TVSeriesEditCommand implements ActionCommand {
                     }
                 }
                 catch (UnsupportedEncodingException e) {
-                    logger.error(e);
-                }
-            }
-        }
-    }
-
-    /**
-     * Save poster.
-     * @param multiparts incoming data.
-     * @param tvSeries entity to update.
-     */
-    private void savePoster(List<FileItem> multiparts, TVSeries tvSeries) {
-        String directory = PathsManager.getProperty("posters");
-        for (FileItem item : multiparts){
-            if(!item.isFormField()) {
-                try {
-                    String name = new String(item.getName().getBytes("ISO-8859-1"), "UTF-8");
-                    if (name.length() != 0) {
-                        File file = new File(directory + tvSeries.getPosterFileName());
-                        if (file.exists()) file.delete();
-                        item.write(new File(directory + tvSeries.getPosterFileName()));
-                    }
-                }
-                catch (Exception e) {
                     logger.error(e);
                 }
             }

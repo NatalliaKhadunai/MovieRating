@@ -1,11 +1,14 @@
 package main.model.command;
 
 import main.controller.Page;
+import main.model.exception.ImageFormatException;
+import main.model.manager.ImageManager;
 import main.model.manager.PathsManager;
 import main.FilmField;
 import main.model.dao.FilmDAO;
 import main.model.entity.Film;
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
@@ -27,20 +30,21 @@ public class FilmEditCommand implements ActionCommand {
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         String page = null;
         int filmID = Integer.valueOf(request.getParameter("filmID"));
-        if(ServletFileUpload.isMultipartContent(request)){
+        if(ServletFileUpload.isMultipartContent(request)) {
+            List<FileItem> multiparts = null;
             try {
-                List<FileItem> multiparts = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
-                FilmDAO filmDAO = new FilmDAO();
-                Film film = filmDAO.getEntity(filmID);
-                List<FilmField> updatedFields = getUpdatedFields(multiparts);
-                updateFields(multiparts, updatedFields, film);
-                savePoster(multiparts, film);
-                filmDAO.updateEntity(film, updatedFields);
-                filmDAO.closeConnection();
-                page = Page.SERVICE_SERVLET.getPagePath() + "?requestType=filmList";
-            } catch (Exception e) {
+                multiparts = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
+            } catch (FileUploadException e) {
                 logger.error(e);
             }
+            FilmDAO filmDAO = new FilmDAO();
+            Film film = filmDAO.getEntity(filmID);
+            List<FilmField> updatedFields = getUpdatedFields(multiparts);
+            updateFields(multiparts, updatedFields, film);
+            ImageManager.savePoster(multiparts, film);
+            filmDAO.updateEntity(film, updatedFields);
+            filmDAO.closeConnection();
+            page = Page.SERVICE_SERVLET.getPagePath() + "?requestType=filmList";
         }
         return page;
     }
@@ -103,30 +107,6 @@ public class FilmEditCommand implements ActionCommand {
                     }
                 }
                 catch (UnsupportedEncodingException e) {
-                    logger.error(e);
-                }
-            }
-        }
-    }
-
-    /**
-     * Save poster.
-     * @param multiparts incoming data.
-     * @param film entity to update.
-     */
-    private void savePoster(List<FileItem> multiparts, Film film) {
-        String directory = PathsManager.getProperty("posters");
-        for (FileItem item : multiparts){
-            if(!item.isFormField()) {
-                try {
-                    String name = new String(item.getName().getBytes("ISO-8859-1"), "UTF-8");
-                    if (name.length() != 0) {
-                        File file = new File(directory + film.getPosterFileName());
-                        if (file.exists()) file.delete();
-                        item.write(new File(directory + film.getPosterFileName()));
-                    }
-                }
-                catch (Exception e) {
                     logger.error(e);
                 }
             }

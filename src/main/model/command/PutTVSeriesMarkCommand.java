@@ -27,10 +27,11 @@ public class PutTVSeriesMarkCommand implements ActionCommand {
         MarkDAO markDAO = new MarkDAO();
         if (markDAO.getEntity(userLogin, tvSeries) == null) {
             markDAO.addEntity(userLogin, tvSeries, mark);
+            markDAO.closeConnection();
             HttpSession session = request.getSession(false);
             User user = (User)session.getAttribute("loggedUser");
             UserDAO userDAO = new UserDAO();
-            userDAO.addPoint(user, countPoint(markDAO, tvSeries, mark));
+            userDAO.addPoint(user, countPoint(tvSeries, mark));
             userDAO.closeConnection();
             markDAO.closeConnection();
             updateFilmRating(tvSeries);
@@ -75,20 +76,21 @@ public class PutTVSeriesMarkCommand implements ActionCommand {
 
     /**
      * Define how many points should be user status coefficient increased or decreased.
-     * @param markDAO DAO for mark table.
      * @param tvSeries entity, which was estimated.
      * @param mark value.
      * @return counted points.
      */
-    private double countPoint(MarkDAO markDAO, TVSeries tvSeries, int mark) {
+    private double countPoint(TVSeries tvSeries, int mark) {
         double resultPoint = 0;
+        MarkDAO markDAO = new MarkDAO();
         int numOfMarks = markDAO.numberOfMarks(tvSeries);
         int numOfUsers = getNumberOfUsers();
         if (numOfMarks==0) numOfMarks = 1;
         double differenceMark = numOfUsers / numOfMarks;
-        double avgMark = markDAO.averageMark(tvSeries);
+        double avgMark =tvSeries.getRating();
         if (mark >= avgMark - differenceMark && mark <= avgMark + differenceMark) resultPoint = 0.1;
         else resultPoint = -0.1;
+        markDAO.closeConnection();
         return resultPoint;
     }
 }

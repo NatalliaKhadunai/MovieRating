@@ -31,6 +31,10 @@ public class ImageDAO extends AbstractDAO {
         }
     }
 
+    /**
+     * Remove entity.
+     * @param fileName value to remove.
+     */
     public void removeEntity(String fileName) {
         if (fileName == null || fileName.equals("")) return;
         try {
@@ -42,29 +46,5 @@ public class ImageDAO extends AbstractDAO {
         catch (SQLException e) {
             logger.error(e);
         }
-    }
-
-    /**
-     * Form home slider image list.
-     * @return List with filenames of images.
-     */
-    public List<String> formHomeSliderImagesList() {
-        File directory = new File(PathsManager.getProperty("frames"));
-        File[] files = directory.listFiles();
-        List<String> pictureFileNames = new ArrayList<String>();
-        for (File file : files) {
-          pictureFileNames.add(file.getName());
-        }
-        return pictureFileNames;
-    }
-
-    /**
-     * Remove entity.
-     * @param path value represents filename of image to remove.
-     */
-    public void removeHomeSliderImage(String path) {
-        if (path == null || path.equals("")) return;
-        File file = new File(PathsManager.getProperty("frames") + path);
-        file.delete();
     }
 }

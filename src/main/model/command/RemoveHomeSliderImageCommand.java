@@ -1,6 +1,7 @@
 package main.model.command;
 
 import main.controller.Page;
+import main.model.manager.ImageManager;
 import main.model.manager.PathsManager;
 import main.model.dao.ImageDAO;
 
@@ -13,9 +14,7 @@ public class RemoveHomeSliderImageCommand implements ActionCommand {
     public String execute(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
         String page = null;
         String filename = new String(request.getParameter("fileName").getBytes("ISO-8859-1"), "UTF-8");
-        ImageDAO imageDAO = new ImageDAO();
-        imageDAO.removeHomeSliderImage(filename);
-        imageDAO.closeConnection();
+        ImageManager.removeHomeSliderImage(filename);
         page = Page.SERVICE_SERVLET.getPagePath() + "?requestType=homeSliderImagesPage";
         return page;
     }

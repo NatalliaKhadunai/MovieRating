@@ -2,6 +2,7 @@ package main.model.command;
 
 import main.controller.Page;
 import main.model.VideoProductComparatorByComment;
+import main.model.manager.ImageManager;
 import main.model.manager.PathsManager;
 import main.model.dao.FilmDAO;
 import main.model.dao.ImageDAO;
@@ -23,9 +24,7 @@ public class EmptyCommand implements ActionCommand {
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         String page = null;
-        ImageDAO imageDAO = new ImageDAO();
-        List<String> images = imageDAO.formHomeSliderImagesList();
-        imageDAO.closeConnection();
+        List<String> images = ImageManager.formHomeSliderImagesList();
         List<VideoProduct> topCommentedVideoProducts = formMostCommentedVideoList();
         HttpSession session = request.getSession(true);
         if (session.getAttribute("locale") == null) {

@@ -17,14 +17,4 @@ public class ImageDAOTest {
     public void testAddEntityEmptyFileName() throws Exception {
         imageDAO.addEntity("");
     }
-
-    @Test
-    public void testRemoveHomeSliderImageNullPath() throws Exception {
-        imageDAO.removeHomeSliderImage(null);
-    }
-
-    @Test
-    public void testRemoveHomeSliderImageEmptyPath() throws Exception {
-        imageDAO.removeHomeSliderImage("");
-    }
 }

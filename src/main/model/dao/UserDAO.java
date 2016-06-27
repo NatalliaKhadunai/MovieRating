@@ -91,6 +91,10 @@ public class UserDAO extends AbstractDAO {
                         updateSet += "sex='" + user.getSex() + "' ";
                     }
                     break;
+                    case PROFILE_PHOTO: {
+                        updateSet += "profilePhoto='" + user.getProfilePhoto() + "'";
+                    }
+                    break;
                 }
             }
             updateSet += "WHERE login='" + user.getLogin() + "'";
@@ -129,6 +133,8 @@ public class UserDAO extends AbstractDAO {
      */
     public void addPoint(User user, double points) {
         if (user == null || points == 0) return;
+        if (user.getStatusCoefficient() == Status.minimalStatus().lowerThreshold && points==-0.1) return;
+        if (user.getStatusCoefficient() == Status.maximumStatus().upperThreshold && points==0.1) return;
         Status userStatus = Status.defineStatus(user.getStatusCoefficient());
         if (userStatus != Status.ADMIN && userStatus != Status.BAN) {
             user.setStatusCoefficient(Math.rint(10.0 * (user.getStatusCoefficient() + points)) / 10.0);
