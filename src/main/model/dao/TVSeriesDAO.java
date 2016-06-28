@@ -262,32 +262,33 @@ public class TVSeriesDAO extends AbstractDAO {
             for (TVSeriesField field : listToUpdate) {
                 switch (field) {
                     case NAME: {
-                        updateSet += "name='" + tvSeries.getName() + "' ";
+                        updateSet += "name='" + tvSeries.getName() + "',";
                     }
                     break;
                     case RELEASE_YEAR: {
-                        updateSet += "releaseYear=" + tvSeries.getReleaseYear();
+                        updateSet += "releaseYear=" + tvSeries.getReleaseYear() + ",";
                     }
                     break;
                     case END_YEAR: {
-                        updateSet += "endYear=" + tvSeries.getEndYear();
+                        updateSet += "endYear=" + tvSeries.getEndYear() + ",";
                     }
                     break;
                     case NUMBER_OF_SEASONS: {
-                        updateSet += "numOfSeasons=" + tvSeries.getNumOfSeasons();
+                        updateSet += "numOfSeasons=" + tvSeries.getNumOfSeasons() + ",";
                     }
                     break;
                     case DESCRIPTION: {
-                        updateSet += "description='" + tvSeries.getDescription() + "' ";
+                        updateSet += "description='" + tvSeries.getDescription() + "',";
                     }
                     break;
                     case RATING: {
-                        updateSet += "rating=" + tvSeries.getRating();
+                        updateSet += "rating=" + tvSeries.getRating() + ",";
                     }
                     break;
                 }
             }
-            updateSet += "WHERE ID=" + tvSeries.getID();
+            updateSet = updateSet.substring(0, updateSet.length() - 1);
+            updateSet += " WHERE ID=" + tvSeries.getID();
             PreparedStatement preparedStatement = connection.prepareStatement(updateSet);
             preparedStatement.executeUpdate();
             preparedStatement.close();
@@ -304,7 +305,7 @@ public class TVSeriesDAO extends AbstractDAO {
     public void updateRating(TVSeries tvSeries) {
         if (tvSeries == null) return;
         MarkDAO markDAO = new MarkDAO();
-        double avgMark = markDAO.averageMark(tvSeries);
+        double avgMark = Math.rint(10.0 * (markDAO.averageMark(tvSeries))) / 10.0;
         markDAO.closeConnection();
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(QueryManager.getProperty("tvseriesDAO.updateRating"));

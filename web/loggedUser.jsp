@@ -45,6 +45,9 @@
                 <a class="btn btn-default" href="/editProfile.jsp">
                     <fmt:message key="button.editProfile" bundle="${rb}"/>
                 </a>
+                <a class="btn btn-default" href="/RatingServlet?requestType=deletePage">
+                    <fmt:message key="button.deleteProfile" bundle="${rb}"/>
+                </a>
             </div>
         </div>
     </div>

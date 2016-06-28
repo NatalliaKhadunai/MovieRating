@@ -20,7 +20,7 @@
 
     <div class="row">
         <form class="col-md-4" action="/RatingServlet?requestType=changePassword" method="post">
-            <h2>Specify old and new passwords</h2>
+            <h2><fmt:message key="label.specifyOldAndNewPasswords" bundle="${rb}"/></h2>
             <br>
             <label><fmt:message key="label.oldPassword" bundle="${rb}"/>:</label>
             <c:choose>

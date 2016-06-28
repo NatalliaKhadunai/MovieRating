@@ -61,6 +61,14 @@
                                     <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                                     <fmt:message key="button.removeBan" bundle="${rb}"/>
                                 </a>
+                                <a href="/RatingServlet?requestType=userMakeAdmin&login=${user.login}" class="btn btn-success" role="button">
+                                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                    <fmt:message key="button.makeAdmin" bundle="${rb}"/>
+                                </a>
+                                <a href="/RatingServlet?requestType=userRemoveAdminStatus&login=${user.login}" class="btn btn-success" role="button">
+                                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                    <fmt:message key="button.removeAdminStatus" bundle="${rb}"/>
+                                </a>
                             </td>
                         </tr>
                     </c:forEach>

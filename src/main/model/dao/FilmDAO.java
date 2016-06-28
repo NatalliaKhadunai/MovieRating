@@ -258,24 +258,25 @@ public class FilmDAO extends AbstractDAO {
             for (FilmField field : listToUpdate) {
                 switch (field) {
                     case NAME: {
-                        updateSet += "name='" + film.getName() + "' ";
+                        updateSet += "name='" + film.getName() + "',";
                     }
                     break;
                     case RELEASE_DATE: {
-                        updateSet += "releaseDate='" + film.getReleaseDate() + "' ";
+                        updateSet += "releaseDate='" + film.getReleaseDate() + "',";
                     }
                     break;
                     case DESCRIPTION: {
-                        updateSet += "description='" + film.getDescription() + "' ";
+                        updateSet += "description='" + film.getDescription() + "',";
                     }
                     break;
                     case RATING: {
-                        updateSet += "rating=" + film.getRating();
+                        updateSet += "rating=" + film.getRating() + ",";
                     }
                     break;
                 }
             }
-            updateSet += "WHERE ID=" + film.getID();
+            updateSet = updateSet.substring(0, updateSet.length() - 1);
+            updateSet += " WHERE ID=" + film.getID();
             PreparedStatement preparedStatement = connection.prepareStatement(updateSet);
             preparedStatement.executeUpdate();
             preparedStatement.close();
@@ -292,7 +293,7 @@ public class FilmDAO extends AbstractDAO {
     public void updateRating(Film film) {
         if (film == null) return;
         MarkDAO markDAO = new MarkDAO();
-        double avgMark = markDAO.averageMark(film);
+        double avgMark = Math.rint(10.0 * (markDAO.averageMark(film))) / 10.0;
         markDAO.closeConnection();
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(QueryManager.getProperty("filmDAO.updateRating"));

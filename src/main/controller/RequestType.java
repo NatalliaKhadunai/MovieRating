@@ -15,6 +15,8 @@ public enum RequestType {
     CHANGE_PASSWORD("changePassword", new ChangePasswordCommand()),
     /** Edit profile request */
     EDIT_PROFILE("editProfile", new EditProfileCommand()),
+    /** Delete page request */
+    DELETE_PAGE("deletePage", new DeletePageCommand()),
     /** Exit request */
     EXIT("exit", new ExitCommand()),
     /** User page request */
@@ -27,6 +29,10 @@ public enum RequestType {
     USER_BAN("userBan", new UserBanCommand()),
     /** User remove ban request */
     USER_REMOVE_BAN("userRemoveBan", new UserRemoveBanCommand()),
+    /** User make admin request */
+    USER_MAKE_ADMIN("userMakeAdmin", new UserMakeAdminCommand()),
+    /** User remove admin status request */
+    USER_REMOVE_ADMIN_STATUS("userRemoveAdminStatus", new UserRemoveAdminStatusCommand()),
     /** User list request */
     USER_LIST("userList", new UserListCommand()),
     /** Film page request */

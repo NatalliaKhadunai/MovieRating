@@ -95,7 +95,7 @@ public class CommentDAO extends AbstractDAO {
                 Comment comment = new Comment();
                 comment.setUserLogin(resultSet.getString("UserLogin"));
                 comment.setContent(resultSet.getString("Content"));
-                comment.setDate(resultSet.getDate("Date"));
+                comment.setDate(resultSet.getTimestamp("Date"));
                 commentList.add(comment);
             }
         }

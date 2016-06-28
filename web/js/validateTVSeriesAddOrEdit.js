@@ -21,6 +21,10 @@ function validate(form) {
         alert("End year should contain only numeric characters!");
         return false;
     }
+    else if (parseInt(elems.releaseYear.value) > parseInt(elems.endYear.value)) {
+        alert("Release year should be less than end year!");
+        return false;
+    }
     else if (elems.numOfSeasons.disabled == false && elems.numOfSeasons.value.trim() == "") {
         alert("Number of seasons shouldn't  be empty or contain only spaces!");
         return false;

@@ -53,7 +53,8 @@ public class EmptyCommand implements ActionCommand {
         videoProductList.addAll(films);
         videoProductList.addAll(tvseries);
         Collections.sort(videoProductList, new VideoProductComparatorByComment());
-        List<VideoProduct> resultList = videoProductList.subList(0,3);
+        List<VideoProduct> resultList = new ArrayList<>();
+        if (videoProductList.size() >= 3) resultList = videoProductList.subList(0,3);
         return resultList;
     }
 

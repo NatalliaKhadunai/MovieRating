@@ -1,6 +1,7 @@
 package main.model.entity;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 
 /**
  * Class {@code Comment} represents Comment entity.
@@ -20,7 +21,7 @@ public class Comment {
     /** {@code Comment} content */
     private String content;
     /** {@link java.sql.Date}, when comment was left */
-    private Date date;
+    private Timestamp date;
 
     /**
      * Returns film ID value for the object.
@@ -74,7 +75,7 @@ public class Comment {
      * Returns date value for the object.
      * @return date value for the object.
      */
-    public Date getDate() {
+    public Timestamp getDate() {
         return date;
     }
 
@@ -82,7 +83,7 @@ public class Comment {
      * Sets date value for the object.
      * @param date value for the object.
      */
-    public void setDate(Date date) {
+    public void setDate(Timestamp date) {
         this.date = date;
     }
 

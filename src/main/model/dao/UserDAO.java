@@ -1,5 +1,6 @@
 package main.model.dao;
 
+import main.model.manager.DefaultImageManager;
 import main.model.manager.QueryManager;
 import main.ProfileField;
 import main.model.entity.Status;
@@ -60,6 +61,19 @@ public class UserDAO extends AbstractDAO {
             preparedStatement.executeUpdate();
             preparedStatement.close();
             user.setProfilePhoto(defineProfilePhotoBySex(user.getSex()));
+        }
+        catch (SQLException e) {
+            logger.error(e);
+        }
+    }
+
+    public void removeEntity(String login) {
+        if (login == null || login.equals("")) return;
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(QueryManager.getProperty("userDAO.removeEntity"));
+            preparedStatement.setString(1, login);
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
         }
         catch (SQLException e) {
             logger.error(e);
@@ -171,15 +185,13 @@ public class UserDAO extends AbstractDAO {
         if (user == null || points == 0) return;
         if (user.getStatusCoefficient() == Status.minimalStatus().lowerThreshold && points==-0.1) return;
         if (user.getStatusCoefficient() == Status.maximumStatus().upperThreshold && points==0.1) return;
-        Status userStatus = Status.defineStatus(user.getStatusCoefficient());
-        if (userStatus != Status.ADMIN && userStatus != Status.BAN) {
-            user.setStatusCoefficient(Math.rint(10.0 * (user.getStatusCoefficient() + points)) / 10.0);
-            updateStatusCoefficient(user);
-            if (!user.getStatusName().equals(Status.defineStatus(user.getStatusCoefficient()).name())) {
-                Status newStatus = Status.defineStatus(user.getStatusCoefficient());
-                user.setStatusName(newStatus.name());
-                updateStatus(user);
-            }
+        user.setStatusCoefficient(Math.rint(10.0 * (user.getStatusCoefficient() + points)) / 10.0);
+        updateStatusCoefficient(user);
+        if (!user.getStatusName().equals(Status.defineStatus(user.getStatusCoefficient()).name()) &&
+                !user.getStatusName().equals(Status.adminStatus().name())) {
+            Status newStatus = Status.defineStatus(user.getStatusCoefficient());
+            user.setStatusName(newStatus.name());
+            updateStatus(user);
         }
     }
 
@@ -228,9 +240,9 @@ public class UserDAO extends AbstractDAO {
         if (sex == null || sex.equals("")) return null;
         String profilePhoto = null;
         switch (sex) {
-            case "F": profilePhoto = "default-female.png"; break;
-            case "M": profilePhoto = "default-male.png"; break;
-            default: profilePhoto = "default-user.png"; break;
+            case "F": profilePhoto = DefaultImageManager.getProperty("defaultFemale"); break;
+            case "M": profilePhoto = DefaultImageManager.getProperty("defaultMale"); break;
+            default: profilePhoto = DefaultImageManager.getProperty("defaultUser"); break;
         }
         return profilePhoto;
     }
@@ -254,6 +266,7 @@ public class UserDAO extends AbstractDAO {
                 if (sex != null) user.setSex(sex.charAt(0));
                 if (user.getProfilePhoto() == null) user.setProfilePhoto(defineProfilePhotoBySex(user.getSex()));
                 user.setStatusCoefficient(resultSet.getDouble("StatusCoefficient"));
+                String statusName = resultSet.getString("Name");
                 user.setStatusName(resultSet.getString("Name"));
             }
         } catch (SQLException e) {

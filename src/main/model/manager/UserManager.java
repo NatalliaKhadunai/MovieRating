@@ -125,4 +125,37 @@ public class UserManager {
         userDAO.closeConnection();
         userRemoveBan(user);
     }
+
+    public void userMakeAdmin(User user) {
+        if (user == null || user.getStatusName().equals(Status.banedStatus().name())) return;
+        user.setStatusName(Status.adminStatus().name());
+        UserDAO userDAO = new UserDAO();
+        userDAO.updateStatus(user);
+        userDAO.closeConnection();
+    }
+
+    public void userMakeAdmin(String login) {
+        if (login == null || login.equals("")) return;
+        UserDAO userDAO = new UserDAO();
+        User user = userDAO.getEntity(login);
+        userDAO.closeConnection();
+        userMakeAdmin(user);
+    }
+
+    public void removeAdminStatus(String login) {
+        if (login == null || login.equals("")) return;
+        UserDAO userDAO = new UserDAO();
+        User user = userDAO.getEntity(login);
+        userDAO.closeConnection();
+        removeAdminStatus(user);
+    }
+
+    public void removeAdminStatus(User user) {
+        if (user == null || !user.getStatusName().equals(Status.adminStatus().name())) return;
+        Status currentStatus =  Status.defineStatus(user.getStatusCoefficient());
+        user.setStatusName(currentStatus.name());
+        UserDAO userDAO = new UserDAO();
+        userDAO.updateStatus(user);
+        userDAO.closeConnection();
+    }
 }

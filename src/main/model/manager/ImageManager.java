@@ -4,11 +4,14 @@ import main.model.entity.User;
 import main.model.entity.VideoProduct;
 import main.model.exception.ImageFormatException;
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.io.comparator.PathFileComparator;
 import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
 import java.util.List;
 
 /**
@@ -146,16 +149,32 @@ public class ImageManager {
                 String[] nameParts = name.split("\\.");
                 String format = nameParts[nameParts.length - 1];
                 if (!format.equals("jpg")) throw new ImageFormatException("Image should have .jpg format!");
-                File file = new File("/img/user/" + user.getLogin() + "." + format);
+                File file = new File(directory + user.getLogin().hashCode() + "." + format);
                 if (file.exists())
                     file.delete();
                 try {
-                    item.write(new File(directory + user.getLogin() + "." + format));
+                    item.write(new File(directory + user.getLogin().hashCode() + "." + format));
                 } catch (Exception e) {
                     logger.error(e);
                 }
-                user.setProfilePhoto(user.getLogin() + "." + format);
+                user.setProfilePhoto(user.getLogin().hashCode() + "." + format);
             }
         }
+    }
+
+    public static void removeProfilePhoto(User user) {
+        if (!checkImageIsDefault(user.getProfilePhoto())) {
+            String directory = PathsManager.getProperty("userProfilePhotos");
+            File file = new File(directory + user.getProfilePhoto());
+            if (file.exists()) file.delete();
+        }
+    }
+
+    private static boolean checkImageIsDefault(String fileName) {
+        Collection<Object> enumeration = DefaultImageManager.getValues();
+        for (Object obj : enumeration) {
+            if (obj.toString().equals(fileName)) return true;
+        }
+        return false;
     }
 }
