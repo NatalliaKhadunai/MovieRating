@@ -41,9 +41,7 @@ public class UserDAO extends AbstractDAO {
         catch (SQLException e) {
             logger.error(e);
         }
-        finally {
-            return user;
-        }
+        return user;
     }
 
     /**
@@ -80,24 +78,25 @@ public class UserDAO extends AbstractDAO {
             for (ProfileField field : listToUpdate) {
                 switch (field) {
                     case EMAIL: {
-                        updateSet += "email='" + user.getEmail() + "' ";
+                        updateSet += "email='" + user.getEmail() + "',";
                     }
                     break;
                     case FULL_NAME: {
-                        updateSet += "fullName='" + user.getName() + "' ";
+                        updateSet += "fullName='" + user.getName() + "',";
                     }
                     break;
                     case SEX: {
-                        updateSet += "sex='" + user.getSex() + "' ";
+                        updateSet += "sex='" + user.getSex() + "',";
                     }
                     break;
                     case PROFILE_PHOTO: {
-                        updateSet += "profilePhoto='" + user.getProfilePhoto() + "'";
+                        updateSet += "profilePhoto='" + user.getProfilePhoto() + "',";
                     }
                     break;
                 }
             }
-            updateSet += "WHERE login='" + user.getLogin() + "'";
+            updateSet = updateSet.substring(0, updateSet.length() - 1);
+            updateSet += " WHERE login='" + user.getLogin() + "'";
             PreparedStatement preparedStatement = connection.prepareStatement(updateSet);
             preparedStatement.executeUpdate();
             preparedStatement.close();
@@ -123,27 +122,6 @@ public class UserDAO extends AbstractDAO {
         }
         catch (SQLException e) {
             logger.error(e);
-        }
-    }
-
-    /**
-     * Add points to user status coefficient.
-     * @param user entity, that identifies logged user.
-     * @param points value to add.
-     */
-    public void addPoint(User user, double points) {
-        if (user == null || points == 0) return;
-        if (user.getStatusCoefficient() == Status.minimalStatus().lowerThreshold && points==-0.1) return;
-        if (user.getStatusCoefficient() == Status.maximumStatus().upperThreshold && points==0.1) return;
-        Status userStatus = Status.defineStatus(user.getStatusCoefficient());
-        if (userStatus != Status.ADMIN && userStatus != Status.BAN) {
-            user.setStatusCoefficient(Math.rint(10.0 * (user.getStatusCoefficient() + points)) / 10.0);
-            updateStatusCoefficient(user);
-            if (!user.getStatusName().equals(Status.defineStatus(user.getStatusCoefficient()).name())) {
-                Status newStatus = Status.defineStatus(user.getStatusCoefficient());
-                user.setStatusName(newStatus.name());
-                updateStatus(user);
-            }
         }
     }
 
@@ -183,108 +161,33 @@ public class UserDAO extends AbstractDAO {
         }
         return result;
     }
+
     /**
-     * Increase user status.
-     * @param user entity represents user, which status should be increased.
+     * Add points to user status coefficient.
+     * @param user entity, that identifies logged user.
+     * @param points value to add.
      */
-    public void userStatusUp(User user) {
-        if (user == null) return;
-        Status maximumStatus = Status.maximumStatus();
-        if (user.getStatusCoefficient() < maximumStatus.lowerThreshold) {
-            Status newStatus = Status.upperStatus(Status.valueOf(user.getStatusName()));
-            if (newStatus != null) {
+    public void addPoint(User user, double points) {
+        if (user == null || points == 0) return;
+        if (user.getStatusCoefficient() == Status.minimalStatus().lowerThreshold && points==-0.1) return;
+        if (user.getStatusCoefficient() == Status.maximumStatus().upperThreshold && points==0.1) return;
+        Status userStatus = Status.defineStatus(user.getStatusCoefficient());
+        if (userStatus != Status.ADMIN && userStatus != Status.BAN) {
+            user.setStatusCoefficient(Math.rint(10.0 * (user.getStatusCoefficient() + points)) / 10.0);
+            updateStatusCoefficient(user);
+            if (!user.getStatusName().equals(Status.defineStatus(user.getStatusCoefficient()).name())) {
+                Status newStatus = Status.defineStatus(user.getStatusCoefficient());
                 user.setStatusName(newStatus.name());
-                user.setStatusCoefficient(newStatus.lowerThreshold);
-                updateStatusCoefficient(user);
                 updateStatus(user);
             }
         }
-    }
-
-    /**
-     * Increase user status.
-     * @param login value represents login of user, which status should be increased.
-     */
-    public void userStatusUp(String login) {
-        if (login == null || login.equals("")) return;
-        User user = getEntity(login);
-        userStatusUp(user);
-    }
-
-    /**
-     * Decrease user status.
-     * @param user entity represents user, which status should be decreased.
-     */
-    public void userStatusDown(User user) {
-        if (user == null) return;
-        Status minimalStatus = Status.minimalStatus();
-        if (user.getStatusCoefficient() > minimalStatus.upperThreshold) {
-            Status newStatus = Status.lowerStatus(Status.valueOf(user.getStatusName()));
-            if (newStatus != null) {
-                user.setStatusName(newStatus.name());
-                user.setStatusCoefficient(newStatus.lowerThreshold);
-                updateStatusCoefficient(user);
-                updateStatus(user);
-            }
-        }
-    }
-
-    /**
-     * Decrease user status.
-     * @param login value represents login of user, which status should be decreased.
-     */
-    public void userStatusDown(String login) {
-        if (login == null || login.equals("")) return;
-        User user = getEntity(login);
-        userStatusDown(user);
-    }
-
-    /**
-     * Ban user.
-     * @param user entity represents user, which should be baned.
-     */
-    public void userBan(User user) {
-        if (user == null) return;
-        user.setStatusName(Status.banedStatus().name());
-        updateStatus(user);
-    }
-
-    /**
-     * Ban user.
-     * @param login value represents login of user, which should be baned.
-     */
-    public void userBan(String login) {
-        if (login == null || login.equals("")) return;
-        User user = getEntity(login);
-        userBan(user);
-    }
-
-    /**
-     * Remove user ban.
-     * @param user entity represents user, which ban should be removed.
-     */
-    public void userRemoveBan(User user) {
-        if (user == null) return;
-        Status currentStatus =  Status.defineStatus(user.getStatusCoefficient());
-        user.setStatusName(currentStatus.name());
-        updateStatus(user);
-    }
-
-    /**
-     * Remove user ban.
-     * @param login value represents login of user, which ban should be removed.
-     */
-    public void userRemoveBan(String login) {
-        if (login == null || login.equals("")) return;
-        User user = getEntity(login);
-        userRemoveBan(user);
     }
 
     /**
      * Update user status coefficient.
      * @param user entity, which status coefficient should be updated.
      */
-    private void updateStatusCoefficient(User user) {
+    public void updateStatusCoefficient(User user) {
         if (user == null) return;
         try {
             PreparedStatement updateCoefficient = connection.prepareStatement(QueryManager.getProperty("userDAO.updateStatusCoefficient"));
@@ -302,7 +205,7 @@ public class UserDAO extends AbstractDAO {
      * Update user status.
      * @param user entity, which status should be updated.
      */
-    private void updateStatus(User user) {
+    public void updateStatus(User user) {
         if (user == null) return;
         try {
             PreparedStatement updateStatus = connection.prepareStatement(QueryManager.getProperty("userDAO.updateStatus"));
@@ -324,9 +227,11 @@ public class UserDAO extends AbstractDAO {
     private String defineProfilePhotoBySex(String sex) {
         if (sex == null || sex.equals("")) return null;
         String profilePhoto = null;
-        if (sex.equals("F")) profilePhoto = "default-female.png";
-        else if (sex.equals("M")) profilePhoto = "default-male.png";
-        else profilePhoto = "default-user.png";
+        switch (sex) {
+            case "F": profilePhoto = "default-female.png"; break;
+            case "M": profilePhoto = "default-male.png"; break;
+            default: profilePhoto = "default-user.png"; break;
+        }
         return profilePhoto;
     }
 
@@ -353,9 +258,8 @@ public class UserDAO extends AbstractDAO {
             }
         } catch (SQLException e) {
             logger.error(e);
-        } finally {
-            return user;
         }
+        return user;
     }
 
     /**
@@ -384,8 +288,6 @@ public class UserDAO extends AbstractDAO {
         catch (SQLException e) {
             logger.error(e);
         }
-        finally {
-            return users;
-        }
+        return users;
     }
 }

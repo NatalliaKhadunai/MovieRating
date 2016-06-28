@@ -69,7 +69,7 @@ public enum Status {
     public static Status lowerStatus(Status status) {
         if (!status.equals(Status.ADMIN) && !status.equals(Status.BAN) && !status.equals(Status.BRONZE)) {
             Status resultStatus = null;
-            EnumSet<Status> enumSet = EnumSet.range(Status.minimalStatus(), Status.maximumStatus());
+            EnumSet<Status> enumSet = EnumSet.range(Status.maximumStatus(),Status.minimalStatus());
             for (Status st : enumSet) {
                 if (st.upperThreshold + 0.1 == status.lowerThreshold) resultStatus = st;
             }
@@ -87,7 +87,7 @@ public enum Status {
     public static Status upperStatus(Status status) {
         if (!status.equals(Status.ADMIN) && !status.equals(Status.BAN) && !status.equals(Status.GOLD)) {
             Status resultStatus = null;
-            EnumSet<Status> enumSet = EnumSet.range(Status.BRONZE, Status.GOLD);
+            EnumSet<Status> enumSet = EnumSet.range(Status.maximumStatus(),Status.minimalStatus());
             for (Status st : enumSet) {
                 if (st.lowerThreshold - 0.1 == status.upperThreshold) resultStatus = st;
             }

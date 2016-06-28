@@ -32,21 +32,19 @@ public class EditProfileCommand implements ActionCommand {
             List<FileItem> multiparts = null;
             try {
                 multiparts = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
-            }
-            catch (FileUploadException e) {
+            } catch (FileUploadException e) {
                 logger.error(e);
             }
-                UserDAO userDAO = new UserDAO();
-                User user = (User) request.getSession(false).getAttribute("loggedUser");
-                List<ProfileField> updatedFields = setUpdatedFields(multiparts, user);
-                userDAO.updateEntity(user, updatedFields);
-                userDAO.closeConnection();
-                try {
-                    response.sendRedirect(Page.LOGGED_USER_PAGE.getPagePath());
-                }
-                catch (IOException e) {
-                    logger.error(e);
-                }
+            UserDAO userDAO = new UserDAO();
+            User user = (User) request.getSession(false).getAttribute("loggedUser");
+            List<ProfileField> updatedFields = setUpdatedFields(multiparts, user);
+            userDAO.updateEntity(user, updatedFields);
+            userDAO.closeConnection();
+            try {
+                response.sendRedirect(Page.LOGGED_USER_PAGE.getPagePath());
+            } catch (IOException e) {
+                logger.error(e);
+            }
         }
     }
 

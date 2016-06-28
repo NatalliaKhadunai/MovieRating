@@ -35,7 +35,7 @@
         </div>
     </div>
 
-    <div class="row" style="margin-top: 85px;">
+    <div class="row" style="margin-top: 100px;">
         <h3><fmt:message key="label.leaveYourComment" bundle="${rb}"/></h3>
         <textarea class="form-control" class="col-md-4" name="commentContent" id="commentContent" onkeyup="commentLength('<fmt:message key="label.symbols" bundle="${rb}"/>')"></textarea>
         <br>

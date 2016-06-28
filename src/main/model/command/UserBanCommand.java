@@ -3,6 +3,8 @@ package main.model.command;
 import main.controller.Page;
 import main.model.dao.UserDAO;
 import main.model.entity.User;
+import main.model.exception.UserNotFoundException;
+import main.model.manager.UserManager;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -18,9 +20,10 @@ import java.util.List;
 public class UserBanCommand implements ActionCommand {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
-        UserDAO userDAO = new UserDAO();
-        userDAO.userBan(new String(request.getParameter("login").getBytes("ISO-8859-1"), "UTF-8"));
-        userDAO.closeConnection();
+        String userLogin = new String(request.getParameter("login").getBytes("ISO-8859-1"), "UTF-8");
+        if (userLogin == null || userLogin.equals("")) throw new UserNotFoundException("User not found!");
+        UserManager userManager = new UserManager();
+        userManager.userBan(userLogin);
         try {
             response.sendRedirect(Page.SERVICE_SERVLET.getPagePath() + "?requestType=userList");
         }

@@ -8,6 +8,7 @@ import main.model.dao.MarkDAO;
 import main.model.entity.Comment;
 import main.model.entity.Film;
 import main.model.entity.User;
+import main.model.exception.VideoProductNotFoundException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +26,7 @@ public class FilmPageCommand implements ActionCommand {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
         String title = new String(request.getParameter("filmTitle").getBytes("ISO-8859-1"), "UTF-8");
+        if (title == null || title.equals("")) throw new VideoProductNotFoundException("Film not found!");
         FilmDAO filmDAO = new FilmDAO();
         Film film = filmDAO.getEntity(title);
         filmDAO.closeConnection();

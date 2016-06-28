@@ -10,6 +10,7 @@
     <title>Movie Rating</title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/roundedImageSmall.css" rel="stylesheet">
+    <link href="css/actionForm.css" rel="stylesheet">
 </head>
 <body>
 
@@ -41,10 +42,12 @@
                             <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                             <fmt:message key="button.edit" bundle="${rb}"/>
                         </a>
-                        <a href="/RatingServlet?requestType=filmRemove&filmName=${film.name}" class="btn btn-danger" role="button">
-                            <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
-                            <fmt:message key="button.remove" bundle="${rb}"/>
-                        </a>
+                        <form class="actionForm" action="/RatingServlet?requestType=filmRemove&filmName=${film.name}" method="post">
+                            <button type="submit" class="btn btn-danger">
+                                <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                                <fmt:message key="button.remove" bundle="${rb}"/>
+                            </button>
+                        </form>
                     </td>
                 </tr>
             </c:forEach>

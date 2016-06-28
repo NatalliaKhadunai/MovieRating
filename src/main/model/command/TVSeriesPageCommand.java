@@ -6,6 +6,7 @@ import main.model.dao.CommentDAO;
 import main.model.dao.TVSeriesDAO;
 import main.model.entity.Comment;
 import main.model.entity.TVSeries;
+import main.model.exception.VideoProductNotFoundException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +23,7 @@ public class TVSeriesPageCommand implements ActionCommand {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
         String title = new String(request.getParameter("tvseriesTitle").getBytes("ISO-8859-1"), "UTF-8");
+        if (title == null || title.equals("")) throw new VideoProductNotFoundException("TV Series not found!");
         TVSeriesDAO tvSeriesDAO = new TVSeriesDAO();
         TVSeries tvSeries = tvSeriesDAO.getEntity(title);
         tvSeriesDAO.closeConnection();

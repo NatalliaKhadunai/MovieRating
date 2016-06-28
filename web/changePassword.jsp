@@ -10,9 +10,6 @@
     <title>Movie Rating</title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/index.css" rel="stylesheet">
-    <link href="css/formSignUp.css" rel="stylesheet">
-    <script src="js/jquery-2.2.3.js"></script>
-    <script src="js/bootstrap.js"></script>
 </head>
 
 <body>
