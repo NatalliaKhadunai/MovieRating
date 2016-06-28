@@ -23,8 +23,7 @@ import java.util.Locale;
 
 public class PutFilmCommentCommand implements ActionCommand {
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
-        String page = null;
+    public void execute(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
         String content = new String(request.getParameter("content").getBytes("ISO-8859-1"), "UTF-8");
         String filmName = new String(request.getParameter("filmName").getBytes("ISO-8859-1"), "UTF-8");
         String login = new String(request.getParameter("userLogin").getBytes("ISO-8859-1"), "UTF-8");
@@ -43,7 +42,6 @@ public class PutFilmCommentCommand implements ActionCommand {
         catch (IOException e) {
             logger.error(e);
         }
-        return page;
     }
 
     /**

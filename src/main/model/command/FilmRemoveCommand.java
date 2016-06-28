@@ -8,6 +8,7 @@ import main.model.manager.ImageManager;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -16,8 +17,7 @@ import java.io.UnsupportedEncodingException;
 
 public class FilmRemoveCommand implements ActionCommand {
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
-        String page = null;
+    public void execute(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
         String title = new String(request.getParameter("filmName").getBytes("ISO-8859-1"), "UTF-8");
         FilmDAO filmDAO = new FilmDAO();
         Film film = filmDAO.getEntity(title);
@@ -27,7 +27,11 @@ public class FilmRemoveCommand implements ActionCommand {
         imageDAO.removeEntity(film.getPosterFileName());
         imageDAO.closeConnection();
         ImageManager.removePoster(film);
-        page = Page.SERVICE_SERVLET.getPagePath() + "?requestType=filmList";
-        return page;
+        try {
+            response.sendRedirect(Page.SERVICE_SERVLET.getPagePath() + "?requestType=filmList");
+        }
+        catch (IOException e) {
+            logger.error(e);
+        }
     }
 }

@@ -121,12 +121,7 @@ public class VideoProduct {
 
         VideoProduct that = (VideoProduct) o;
 
-        if (ID != that.ID) return false;
-        if (Float.compare(that.rating, rating) != 0) return false;
-        if (numOfComments != that.numOfComments) return false;
-        if (!name.equals(that.name)) return false;
-        if (description != null ? !description.equals(that.description) : that.description != null) return false;
-        return posterFileName != null ? posterFileName.equals(that.posterFileName) : that.posterFileName == null;
+        return name.equals(that.name);
 
     }
 

@@ -5,6 +5,7 @@ import main.controller.Page;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 
 /**
  * User exit command.
@@ -12,12 +13,15 @@ import javax.servlet.http.HttpSession;
 
 public class ExitCommand implements ActionCommand {
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) {
-        String page = null;
+    public void execute(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession(false);
         session.setAttribute("isLoggedIn", false);
         session.removeAttribute("loggedUser");
-        page = Page.SERVICE_SERVLET.getPagePath();
-        return page;
+        try {
+            response.sendRedirect(Page.SERVICE_SERVLET.getPagePath());
+        }
+        catch (IOException e) {
+            logger.error(e);
+        }
     }
 }

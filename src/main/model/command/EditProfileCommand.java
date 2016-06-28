@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +27,7 @@ import java.util.List;
 
 public class EditProfileCommand implements ActionCommand {
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) {
-        String page = null;
+    public void execute(HttpServletRequest request, HttpServletResponse response) {
         if (ServletFileUpload.isMultipartContent(request)) {
             List<FileItem> multiparts = null;
             try {
@@ -41,9 +41,13 @@ public class EditProfileCommand implements ActionCommand {
                 List<ProfileField> updatedFields = setUpdatedFields(multiparts, user);
                 userDAO.updateEntity(user, updatedFields);
                 userDAO.closeConnection();
-                page = Page.LOGGED_USER_PAGE.getPagePath();
+                try {
+                    response.sendRedirect(Page.LOGGED_USER_PAGE.getPagePath());
+                }
+                catch (IOException e) {
+                    logger.error(e);
+                }
         }
-        return page;
     }
 
     /**

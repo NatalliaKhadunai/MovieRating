@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.Date;
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ import java.util.List;
 
 public class FilmEditCommand implements ActionCommand {
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) {
+    public void execute(HttpServletRequest request, HttpServletResponse response) {
         String page = null;
         int filmID = Integer.valueOf(request.getParameter("filmID"));
         if(ServletFileUpload.isMultipartContent(request)) {
@@ -44,9 +45,13 @@ public class FilmEditCommand implements ActionCommand {
             ImageManager.savePoster(multiparts, film);
             filmDAO.updateEntity(film, updatedFields);
             filmDAO.closeConnection();
-            page = Page.SERVICE_SERVLET.getPagePath() + "?requestType=filmList";
+            try {
+                response.sendRedirect(Page.SERVICE_SERVLET.getPagePath() + "?requestType=filmList");
+            }
+            catch (IOException e) {
+                logger.error(e);
+            }
         }
-        return page;
     }
 
     /**

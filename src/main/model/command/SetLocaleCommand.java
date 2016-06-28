@@ -5,6 +5,7 @@ import main.controller.Page;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 
 /**
  * Command to change locale.
@@ -12,8 +13,7 @@ import javax.servlet.http.HttpSession;
 
 public class SetLocaleCommand implements ActionCommand {
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) {
-        String page = null;
+    public void execute(HttpServletRequest request, HttpServletResponse response) {
         String locale = request.getParameter("lang");
         HttpSession session = request.getSession(false);
         switch (locale) {
@@ -30,7 +30,11 @@ public class SetLocaleCommand implements ActionCommand {
             }
             break;
         }
-        page = Page.SERVICE_SERVLET.getPagePath();
-        return page;
+        try {
+            response.sendRedirect(Page.SERVICE_SERVLET.getPagePath());
+        }
+        catch (IOException e) {
+            logger.error(e);
+        }
     }
 }

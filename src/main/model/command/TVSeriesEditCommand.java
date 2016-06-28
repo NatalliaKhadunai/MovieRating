@@ -16,14 +16,14 @@ import org.apache.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TVSeriesEditCommand implements ActionCommand {
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) {
-        String page = null;
+    public void execute(HttpServletRequest request, HttpServletResponse response) {
         int tvseriesID = Integer.valueOf(request.getParameter("tvseriesID"));
         if(ServletFileUpload.isMultipartContent(request)) {
             List<FileItem> multiparts = null;
@@ -39,9 +39,13 @@ public class TVSeriesEditCommand implements ActionCommand {
             ImageManager.savePoster(multiparts, tvSeries);
             tvSeriesDAO.updateEntity(tvSeries, updatedFields);
             tvSeriesDAO.closeConnection();
-            page = Page.SERVICE_SERVLET.getPagePath() + "?requestType=tvseriesList";
         }
-        return page;
+        try {
+            response.sendRedirect(Page.SERVICE_SERVLET.getPagePath() + "?requestType=tvseriesList");
+        }
+        catch (IOException e) {
+            logger.error(e);
+        }
     }
 
     /**

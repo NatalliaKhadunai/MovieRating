@@ -18,8 +18,7 @@ import java.io.UnsupportedEncodingException;
 
 public class PutTVSeriesMarkCommand implements ActionCommand {
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
-        String page = null;
+    public void execute(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
         int mark = Integer.parseInt(request.getParameter("mark"));
         String userLogin = new String(request.getParameter("userLogin").getBytes("ISO-8859-1"), "UTF-8");
         String tvseriesName = new String(request.getParameter("tvseriesName").getBytes("ISO-8859-1"), "UTF-8");
@@ -33,11 +32,9 @@ public class PutTVSeriesMarkCommand implements ActionCommand {
             UserDAO userDAO = new UserDAO();
             userDAO.addPoint(user, countPoint(tvSeries, mark));
             userDAO.closeConnection();
-            markDAO.closeConnection();
             updateFilmRating(tvSeries);
         }
         markDAO.closeConnection();
-        return page;
     }
 
     /**

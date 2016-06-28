@@ -22,8 +22,7 @@ import java.util.Locale;
 
 public class PutTVSeriesCommentCommand implements ActionCommand {
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) {
-        String page = null;
+    public void execute(HttpServletRequest request, HttpServletResponse response) {
         try {
             String content = new String(request.getParameter("content").getBytes("ISO-8859-1"), "UTF-8");
             String tvseriesName = new String(request.getParameter("tvseriesName").getBytes("ISO-8859-1"), "UTF-8");
@@ -42,7 +41,6 @@ public class PutTVSeriesCommentCommand implements ActionCommand {
         catch (IOException e) {
             logger.error(e);
         }
-        return page;
     }
 
     /**

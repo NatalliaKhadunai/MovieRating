@@ -8,6 +8,7 @@ import main.model.exception.WrongLoginOrPasswordException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -16,8 +17,7 @@ import java.io.UnsupportedEncodingException;
 
 public class LoginCommand implements ActionCommand {
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
-        String page = Page.SERVICE_SERVLET.getPagePath();
+    public void execute(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
         String login = new String(request.getParameter("login").getBytes("ISO-8859-1"), "UTF-8");
         String password = new String(request.getParameter("password").getBytes("ISO-8859-1"), "UTF-8");
         UserDAO userDAO = new UserDAO();
@@ -29,6 +29,11 @@ public class LoginCommand implements ActionCommand {
             session.setAttribute("loggedUser", user);
         }
         else throw new WrongLoginOrPasswordException("Wrong login or password!");
-        return page;
+        try {
+            response.sendRedirect(Page.SERVICE_SERVLET.getPagePath());
+        }
+        catch (IOException e) {
+            logger.error(e);
+        }
     }
 }

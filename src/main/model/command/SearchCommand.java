@@ -7,8 +7,10 @@ import main.model.entity.Film;
 import main.model.entity.TVSeries;
 import main.model.entity.VideoProduct;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,11 +21,9 @@ import java.util.List;
 
 public class SearchCommand implements ActionCommand {
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
-        String page = null;
+    public void execute(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
         String searchText = new String(request.getParameter("searchText").getBytes("ISO-8859-1"), "UTF-8");
         List<VideoProduct> resultList = formResultList(searchText);
-        page = Page.SEARCH_PAGE.getPagePath();
         int maxPageNo = resultList.size() / 10 + 1;
         if (resultList.size() > 10) {
             if (request.getParameter("pageNo") == null) {
@@ -40,7 +40,12 @@ public class SearchCommand implements ActionCommand {
         }
         request.setAttribute("searchList", resultList);
         request.setAttribute("searchText", searchText);
-        return page;
+        try {
+            request.getRequestDispatcher(Page.SEARCH_PAGE.getPagePath()).forward(request, response);
+        }
+        catch (IOException | ServletException e) {
+            logger.error(e);
+        }
     }
 
     /**

@@ -42,9 +42,7 @@ public class TVSeriesDAO extends AbstractDAO {
         catch (SQLException e) {
             logger.error(e);
         }
-        finally {
-            return tvSeriesList;
-        }
+        return tvSeriesList;
     }
 
     /**
@@ -74,9 +72,7 @@ public class TVSeriesDAO extends AbstractDAO {
         catch (SQLException e) {
             logger.error(e);
         }
-        finally {
-            return tvSeriesList;
-        }
+        return tvSeriesList;
     }
 
     /**
@@ -91,25 +87,13 @@ public class TVSeriesDAO extends AbstractDAO {
             PreparedStatement preparedStatement = connection.prepareStatement(QueryManager.getProperty("tvseriesDAO.getEntityByName"));
             preparedStatement.setString(1, title);
             ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                tvSeries = new TVSeries();
-                tvSeries.setID(resultSet.getInt("ID"));
-                tvSeries.setName(resultSet.getString("Name"));
-                tvSeries.setReleaseYear(resultSet.getInt("ReleaseYear"));
-                tvSeries.setEndYear(resultSet.getInt("EndYear"));
-                tvSeries.setDescription(resultSet.getString("Description"));
-                tvSeries.setNumOfSeasons(resultSet.getInt("NumOfSeasons"));
-                tvSeries.setRating(resultSet.getFloat("Rating"));
-                tvSeries.setPosterFileName(resultSet.getString("FileName"));
-            }
+            tvSeries = getSingleEntity(resultSet);
             preparedStatement.close();
         }
         catch (SQLException e) {
             logger.error(e);
         }
-        finally {
-            return tvSeries;
-        }
+        return tvSeries;
     }
 
     /**
@@ -124,6 +108,23 @@ public class TVSeriesDAO extends AbstractDAO {
             PreparedStatement preparedStatement = connection.prepareStatement(QueryManager.getProperty("tvseriesDAO.getEntityByID"));
             preparedStatement.setInt(1, ID);
             ResultSet resultSet = preparedStatement.executeQuery();
+            tvSeries = getSingleEntity(resultSet);
+            preparedStatement.close();
+        }
+        catch (SQLException e) {
+            logger.error(e);
+        }
+        return tvSeries;
+    }
+
+    /**
+     * Return single entity from database result set.
+     * @param resultSet incoming data set.
+     * @return formed entity.
+     */
+    private TVSeries getSingleEntity(ResultSet resultSet) {
+        TVSeries tvSeries = null;
+        try {
             if (resultSet.next()) {
                 tvSeries = new TVSeries();
                 tvSeries.setID(resultSet.getInt("ID"));
@@ -135,14 +136,33 @@ public class TVSeriesDAO extends AbstractDAO {
                 tvSeries.setRating(resultSet.getFloat("Rating"));
                 tvSeries.setPosterFileName(resultSet.getString("FileName"));
             }
-            preparedStatement.close();
         }
         catch (SQLException e) {
             logger.error(e);
         }
-        finally {
-            return tvSeries;
+        return tvSeries;
+    }
+
+    private List<TVSeries> getListEntity(ResultSet resultSet) {
+        List<TVSeries> tvSeriesList = new ArrayList<>();
+        try {
+            while (resultSet.next()) {
+                TVSeries tvSeries = new TVSeries();
+                tvSeries.setID(resultSet.getInt("ID"));
+                tvSeries.setName(resultSet.getString("Name"));
+                tvSeries.setReleaseYear(resultSet.getInt("ReleaseYear"));
+                tvSeries.setEndYear(resultSet.getInt("EndYear"));
+                tvSeries.setDescription(resultSet.getString("Description"));
+                tvSeries.setNumOfSeasons(resultSet.getInt("NumOfSeasons"));
+                tvSeries.setRating(resultSet.getFloat("Rating"));
+                tvSeries.setPosterFileName(resultSet.getString("FileName"));
+                tvSeriesList.add(tvSeries);
+            }
         }
+        catch (SQLException e) {
+            logger.error(e);
+        }
+        return tvSeriesList;
     }
 
     /**
@@ -181,31 +201,18 @@ public class TVSeriesDAO extends AbstractDAO {
      * @return List of TVSeries entities.
      */
     public List<TVSeries> getAllEntities(String title) {
-        List<TVSeries> tvSeriesList = new ArrayList<>();
+        List<TVSeries> tvSeriesList = null;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(QueryManager.getProperty("tvseriesDAO.getAllEntitiesByTitle"));
             preparedStatement.setString(1, "%" + title + "%");
             ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                TVSeries tvSeries = new TVSeries();
-                tvSeries.setID(resultSet.getInt("ID"));
-                tvSeries.setName(resultSet.getString("Name"));
-                tvSeries.setReleaseYear(resultSet.getInt("ReleaseYear"));
-                tvSeries.setEndYear(resultSet.getInt("EndYear"));
-                tvSeries.setDescription(resultSet.getString("Description"));
-                tvSeries.setNumOfSeasons(resultSet.getInt("NumOfSeasons"));
-                tvSeries.setRating(resultSet.getFloat("Rating"));
-                tvSeries.setPosterFileName(resultSet.getString("FileName"));
-                tvSeriesList.add(tvSeries);
-            }
+            tvSeriesList = getListEntity(resultSet);
             preparedStatement.close();
         }
         catch (SQLException e) {
             logger.error(e);
         }
-        finally {
-            return tvSeriesList;
-        }
+        return tvSeriesList;
     }
 
     /**
@@ -213,30 +220,17 @@ public class TVSeriesDAO extends AbstractDAO {
      * @return List with TVSeries entities.
      */
     public List<TVSeries> getAllEntities() {
-        List<TVSeries> tvSeriesList = new ArrayList<>();
+        List<TVSeries> tvSeriesList = null;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(QueryManager.getProperty("tvseriesDAO.getAllEntities"));
             ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                TVSeries tvSeries = new TVSeries();
-                tvSeries.setID(resultSet.getInt("ID"));
-                tvSeries.setName(resultSet.getString("Name"));
-                tvSeries.setReleaseYear(resultSet.getInt("ReleaseYear"));
-                tvSeries.setEndYear(resultSet.getInt("EndYear"));
-                tvSeries.setDescription(resultSet.getString("Description"));
-                tvSeries.setNumOfSeasons(resultSet.getInt("NumOfSeasons"));
-                tvSeries.setRating(resultSet.getFloat("Rating"));
-                tvSeries.setPosterFileName(resultSet.getString("FileName"));
-                tvSeriesList.add(tvSeries);
-            }
+            tvSeriesList = getListEntity(resultSet);
             preparedStatement.close();
         }
         catch (SQLException e) {
             logger.error(e);
         }
-        finally {
-            return tvSeriesList;
-        }
+        return tvSeriesList;
     }
 
     /**

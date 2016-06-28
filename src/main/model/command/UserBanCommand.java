@@ -4,8 +4,10 @@ import main.controller.Page;
 import main.model.dao.UserDAO;
 import main.model.entity.User;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
@@ -15,14 +17,15 @@ import java.util.List;
 
 public class UserBanCommand implements ActionCommand {
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
-        String page = null;
+    public void execute(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
         UserDAO userDAO = new UserDAO();
         userDAO.userBan(new String(request.getParameter("login").getBytes("ISO-8859-1"), "UTF-8"));
-        List<User> users = userDAO.getAllEntities();
         userDAO.closeConnection();
-        request.setAttribute("userList", users);
-        page = Page.PROCESS_USERS.getPagePath();
-        return page;
+        try {
+            response.sendRedirect(Page.SERVICE_SERVLET.getPagePath() + "?requestType=userList");
+        }
+        catch (IOException e) {
+            logger.error(e);
+        }
     }
 }

@@ -5,7 +5,6 @@ import main.model.entity.Film;
 import main.model.entity.VideoProduct;
 import main.FilmField;
 
-import java.io.Reader;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,10 +18,6 @@ import java.util.List;
 
 public class FilmDAO extends AbstractDAO {
 
-    public FilmDAO() {
-        super();
-    }
-
     /**
      * Search film by title.
      * @param title value.
@@ -35,23 +30,13 @@ public class FilmDAO extends AbstractDAO {
             PreparedStatement preparedStatement = connection.prepareStatement(QueryManager.getProperty("filmDAO.getEntityByName"));
             preparedStatement.setString(1, title);
             ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                film = new Film();
-                film.setID(resultSet.getInt("ID"));
-                film.setName(resultSet.getString("Name"));
-                film.setReleaseDate(resultSet.getDate("ReleaseDate"));
-                film.setDescription(resultSet.getString("Description"));
-                film.setRating(resultSet.getFloat("Rating"));
-                film.setPosterFileName(resultSet.getString("FileName"));
-            }
+            film = getSingleEntity(resultSet);
             preparedStatement.close();
         }
         catch (SQLException e) {
             logger.error(e);
         }
-        finally {
-            return film;
-        }
+        return film;
     }
 
     /**
@@ -66,23 +51,13 @@ public class FilmDAO extends AbstractDAO {
             PreparedStatement preparedStatement = connection.prepareStatement(QueryManager.getProperty("filmDAO.getEntityByID"));
             preparedStatement.setInt(1, ID);
             ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                film = new Film();
-                film.setID(resultSet.getInt("ID"));
-                film.setName(resultSet.getString("Name"));
-                film.setReleaseDate(resultSet.getDate("ReleaseDate"));
-                film.setDescription(resultSet.getString("Description"));
-                film.setRating(resultSet.getFloat("Rating"));
-                film.setPosterFileName(resultSet.getString("FileName"));
-            }
+            film = getSingleEntity(resultSet);
             preparedStatement.close();
         }
         catch (SQLException e) {
             logger.error(e);
         }
-        finally {
-            return film;
-        }
+        return film;
     }
 
     /**
@@ -92,28 +67,18 @@ public class FilmDAO extends AbstractDAO {
      */
     public List<Film> getAllEntities(String title) {
         if (title == null || title.equals("")) return null;
-        List<Film> filmList = new ArrayList<>();
+        List<Film> filmList = null;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(QueryManager.getProperty("filmDAO.getAllEntitiesByTitle"));
             preparedStatement.setString(1, "%" + title + "%");
             ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                Film film = new Film();
-                film.setName(resultSet.getString("Name"));
-                film.setReleaseDate(resultSet.getDate("ReleaseDate"));
-                film.setDescription(resultSet.getString("Description"));
-                film.setRating(resultSet.getFloat("Rating"));
-                film.setPosterFileName(resultSet.getString("FileName"));
-                filmList.add(film);
-            }
+            filmList = getListEntity(resultSet);
             preparedStatement.close();
         }
         catch (SQLException e) {
             logger.error(e);
         }
-        finally {
-            return filmList;
-        }
+        return filmList;
     }
 
     /**
@@ -121,27 +86,17 @@ public class FilmDAO extends AbstractDAO {
      * @return List with Film entities.
      */
     public List<Film> getAllEntities() {
-        List<Film> filmList = new ArrayList<>();
+        List<Film> filmList = null;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(QueryManager.getProperty("filmDAO.getAllEntities"));
             ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()) {
-                Film film = new Film();
-                film.setName(resultSet.getString("Name"));
-                film.setReleaseDate(resultSet.getDate("ReleaseDate"));
-                film.setDescription(resultSet.getString("Description"));
-                film.setRating(resultSet.getFloat("Rating"));
-                film.setPosterFileName(resultSet.getString("FileName"));
-                filmList.add(film);
-            }
+            filmList = getListEntity(resultSet);
             preparedStatement.close();
         }
         catch (SQLException e) {
             logger.error(e);
         }
-        finally {
-            return filmList;
-        }
+        return filmList;
     }
 
     /**
@@ -155,6 +110,7 @@ public class FilmDAO extends AbstractDAO {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 Film film = new Film();
+                film.setID(resultSet.getInt("ID"));
                 film.setName(resultSet.getString("Name"));
                 film.setReleaseDate(resultSet.getDate("ReleaseDate"));
                 film.setDescription(resultSet.getString("Description"));
@@ -166,9 +122,7 @@ public class FilmDAO extends AbstractDAO {
         catch (SQLException e) {
             logger.error(e);
         }
-        finally {
-            return filmList;
-        }
+        return filmList;
     }
 
     /**
@@ -183,11 +137,6 @@ public class FilmDAO extends AbstractDAO {
             while (resultSet.next()) {
                 Film film = new Film();
                 film.setName(resultSet.getString("Name"));
-                Reader reader = resultSet.getCharacterStream("Name");
-                int ch = 0;
-                while ((ch = reader.read()) != -1) {
-                    int c = ch;
-                }
                 film.setReleaseDate(resultSet.getDate("ReleaseDate"));
                 film.setDescription(resultSet.getString("Description"));
                 film.setRating(resultSet.getFloat("Rating"));
@@ -200,9 +149,56 @@ public class FilmDAO extends AbstractDAO {
         catch (SQLException e) {
             logger.error(e);
         }
-        finally {
-            return filmList;
+        return filmList;
+    }
+
+    /**
+     * Return single entity from database result set.
+     * @param resultSet incoming data set.
+     * @return formed entity.
+     */
+    private Film getSingleEntity(ResultSet resultSet) {
+        Film film = null;
+        try {
+            if (resultSet.next()) {
+                film = new Film();
+                film.setID(resultSet.getInt("ID"));
+                film.setName(resultSet.getString("Name"));
+                film.setReleaseDate(resultSet.getDate("ReleaseDate"));
+                film.setDescription(resultSet.getString("Description"));
+                film.setRating(resultSet.getFloat("Rating"));
+                film.setPosterFileName(resultSet.getString("FileName"));
+            }
         }
+        catch (SQLException e) {
+            logger.error(e);
+        }
+        return film;
+    }
+
+    /**
+     * Return list of entities from database result set.
+     * @param resultSet incoming data set.
+     * @return formed entity.
+     */
+    private List<Film> getListEntity(ResultSet resultSet) {
+        List<Film> filmList = new ArrayList<>();
+        try {
+            while (resultSet.next()) {
+                Film film = new Film();
+                film.setID(resultSet.getInt("ID"));
+                film.setName(resultSet.getString("Name"));
+                film.setReleaseDate(resultSet.getDate("ReleaseDate"));
+                film.setDescription(resultSet.getString("Description"));
+                film.setRating(resultSet.getFloat("Rating"));
+                film.setPosterFileName(resultSet.getString("FileName"));
+                filmList.add(film);
+            }
+        }
+        catch (SQLException e) {
+            logger.error(e);
+        }
+        return filmList;
     }
 
     /**

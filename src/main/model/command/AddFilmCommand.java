@@ -2,6 +2,7 @@ package main.model.command;
 
 import main.controller.Page;
 import main.model.exception.ImageFormatException;
+import main.model.exception.VideoProductAlreadyExistsException;
 import main.model.manager.ImageManager;
 import main.model.manager.PathsManager;
 import main.FilmField;
@@ -17,6 +18,7 @@ import org.apache.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.Date;
 import java.util.List;
@@ -27,8 +29,7 @@ import java.util.List;
 
 public class AddFilmCommand implements ActionCommand {
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) {
-        String page = null;
+    public void execute(HttpServletRequest request, HttpServletResponse response) {
         if (ServletFileUpload.isMultipartContent(request)) {
             List<FileItem> multiparts = null;
             try {
@@ -37,16 +38,24 @@ public class AddFilmCommand implements ActionCommand {
                 logger.error(e);
             }
             Film film = fillInfo(multiparts);
-            ImageManager.savePoster(multiparts, film);
-            ImageDAO imageDAO = new ImageDAO();
-            imageDAO.addEntity(film.getPosterFileName());
-            imageDAO.closeConnection();
             FilmDAO filmDAO = new FilmDAO();
-            filmDAO.addEntity(film);
-            filmDAO.closeConnection();
-            page = Page.LOGGED_USER_PAGE.getPagePath();
+            Film filmToCompare = filmDAO.getEntity(film.getName());
+            if (filmToCompare == null || !filmToCompare.equals(film)) {
+                ImageManager.savePoster(multiparts, film);
+                ImageDAO imageDAO = new ImageDAO();
+                imageDAO.addEntity(film.getPosterFileName());
+                imageDAO.closeConnection();
+                filmDAO.addEntity(film);
+                filmDAO.closeConnection();
+            }
+            else throw new VideoProductAlreadyExistsException("Such film already exists!");
+            try {
+                response.sendRedirect(Page.LOGGED_USER_PAGE.getPagePath());
+            }
+            catch (IOException e) {
+                logger.error(e);
+            }
         }
-        return page;
     }
 
     /**

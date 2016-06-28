@@ -52,11 +52,6 @@ public class RatingServlet extends HttpServlet {
             throws ServletException, IOException {
         ActionFactory client = new ActionFactory();
         ActionCommand command = client.defineCommand(request);
-        String page = command.execute(request, response);
-        if (page != null) {
-            if (page.equals(Page.SERVICE_SERVLET.getPagePath()) ||
-                    page.equals(Page.LOGGED_USER_PAGE.getPagePath())) response.sendRedirect(page);
-            else getServletContext().getRequestDispatcher(page).forward(request, response);
-        }
+        command.execute(request, response);
     }
 }

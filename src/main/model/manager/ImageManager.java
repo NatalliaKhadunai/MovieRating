@@ -32,6 +32,46 @@ public class ImageManager {
     }
 
     /**
+     * Save frame.
+     * @param multiparts incoming data.
+     */
+    public static void saveFrame(List<FileItem> multiparts) {
+        String directory = PathsManager.getProperty("frames");
+        String videoProductName = getVideoProductName(multiparts);
+        for(FileItem item : multiparts){
+            if(!item.isFormField()) {
+                try {
+                    String name = new String(item.getName().getBytes("ISO-8859-1"), "UTF-8");
+                    String[] nameParts = name.split("\\.");
+                    String format = nameParts[nameParts.length - 1];
+                    item.write(new File(directory + videoProductName + "." + format));
+                }
+                catch (Exception e) {
+                    logger.error(e);
+                }
+            }
+        }
+    }
+
+    /**
+     * Return video product name.
+     * @param multiparts incoming data.
+     * @return video product name.
+     */
+    private static String getVideoProductName(List<FileItem> multiparts) {
+        String videoProductName = null;
+        for(FileItem item : multiparts) {
+            if (item.isFormField()) {
+                String fieldName = item.getFieldName();
+                if (fieldName.equals("videoProductName")) {
+                    videoProductName = item.getString();
+                }
+            }
+        }
+        return videoProductName;
+    }
+
+    /**
      * Remove entity.
      * @param path value represents filename of image to remove.
      */

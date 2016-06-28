@@ -31,11 +31,8 @@ public class Film extends VideoProduct {
         if (this == o) return true;
         if (!(o instanceof Film)) return false;
         if (!super.equals(o)) return false;
-
         Film film = (Film) o;
-
         return releaseDate.equals(film.releaseDate);
-
     }
 
     @Override

@@ -2,6 +2,7 @@ package main.model.command;
 
 import main.controller.Page;
 import main.model.exception.ImageFormatException;
+import main.model.exception.VideoProductAlreadyExistsException;
 import main.model.manager.ImageManager;
 import main.model.manager.PathsManager;
 import main.model.dao.ImageDAO;
@@ -17,6 +18,7 @@ import org.apache.log4j.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
@@ -26,8 +28,7 @@ import java.util.List;
 
 public class AddTVSeriesCommand implements ActionCommand {
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) {
-        String page = null;
+    public void execute(HttpServletRequest request, HttpServletResponse response) {
         if(ServletFileUpload.isMultipartContent(request)) {
             List<FileItem> multiparts = null;
             try {
@@ -36,16 +37,24 @@ public class AddTVSeriesCommand implements ActionCommand {
                 logger.error(e);
             }
             TVSeries tvSeries = fillInfo(multiparts);
-            ImageManager.savePoster(multiparts, tvSeries);
-            ImageDAO imageDAO = new ImageDAO();
-            imageDAO.addEntity(tvSeries.getPosterFileName());
-            imageDAO.closeConnection();
             TVSeriesDAO tvSeriesDAO = new TVSeriesDAO();
-            tvSeriesDAO.addEntity(tvSeries);
-            tvSeriesDAO.closeConnection();
-            page = Page.LOGGED_USER_PAGE.getPagePath();
+            TVSeries tvSeriesToCompare = tvSeriesDAO.getEntity(tvSeries.getName());
+            if (tvSeriesToCompare == null || !tvSeriesToCompare.equals(tvSeries)) {
+                ImageManager.savePoster(multiparts, tvSeries);
+                ImageDAO imageDAO = new ImageDAO();
+                imageDAO.addEntity(tvSeries.getPosterFileName());
+                imageDAO.closeConnection();
+                tvSeriesDAO.addEntity(tvSeries);
+                tvSeriesDAO.closeConnection();
+            }
+            else throw new VideoProductAlreadyExistsException("Such tv series already exists!");
+            try {
+                response.sendRedirect(Page.LOGGED_USER_PAGE.getPagePath());
+            }
+            catch (IOException e) {
+                logger.error(e);
+            }
         }
-        return page;
     }
 
     /**

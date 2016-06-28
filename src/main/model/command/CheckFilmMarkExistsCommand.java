@@ -17,8 +17,7 @@ import java.io.UnsupportedEncodingException;
 
 public class CheckFilmMarkExistsCommand implements ActionCommand {
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
-        String page = null;
+    public void execute(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
         String userLogin = new String(request.getParameter("userLogin").getBytes("ISO-8859-1"), "UTF-8");
         String filmName = new String(request.getParameter("filmName").getBytes("ISO-8859-1"), "UTF-8");
         FilmDAO filmDAO = new FilmDAO();
@@ -34,6 +33,5 @@ public class CheckFilmMarkExistsCommand implements ActionCommand {
                 logger.error(e);
             }
         }
-        return page;
     }
 }

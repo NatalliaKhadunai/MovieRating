@@ -65,13 +65,10 @@ public class TVSeries extends VideoProduct {
         if (this == o) return true;
         if (!(o instanceof TVSeries)) return false;
         if (!super.equals(o)) return false;
-
         TVSeries tvSeries = (TVSeries) o;
-
         if (releaseYear != tvSeries.releaseYear) return false;
         if (endYear != tvSeries.endYear) return false;
-        return numOfSeasons == tvSeries.numOfSeasons;
-
+        return true;
     }
 
     @Override

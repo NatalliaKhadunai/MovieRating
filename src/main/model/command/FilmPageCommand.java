@@ -9,9 +9,11 @@ import main.model.entity.Comment;
 import main.model.entity.Film;
 import main.model.entity.User;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
@@ -21,8 +23,7 @@ import java.util.List;
 
 public class FilmPageCommand implements ActionCommand {
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
-        String page = null;
+    public void execute(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
         String title = new String(request.getParameter("filmTitle").getBytes("ISO-8859-1"), "UTF-8");
         FilmDAO filmDAO = new FilmDAO();
         Film film = filmDAO.getEntity(title);
@@ -34,7 +35,11 @@ public class FilmPageCommand implements ActionCommand {
         commentDAO.closeConnection();
         request.setAttribute("film", film);
         request.setAttribute("commentList", commentList);
-        page = Page.FILM_PAGE.getPagePath();
-        return page;
+        try {
+            request.getRequestDispatcher(Page.FILM_PAGE.getPagePath()).forward(request, response);
+        }
+        catch (IOException | ServletException e) {
+            logger.error(e);
+        }
     }
 }

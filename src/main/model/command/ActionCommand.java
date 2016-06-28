@@ -19,5 +19,5 @@ public interface ActionCommand {
      * @return page to redirect.
      * @throws UnsupportedEncodingException
      */
-    String execute(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException;
+    void execute(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException;
 }

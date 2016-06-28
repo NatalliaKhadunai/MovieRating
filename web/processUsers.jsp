@@ -27,6 +27,7 @@
                         <th><fmt:message key="label.fullName" bundle="${rb}"/></th>
                         <th><fmt:message key="label.sex" bundle="${rb}"/></th>
                         <th><fmt:message key="label.status" bundle="${rb}"/></th>
+                        <th><fmt:message key="label.statusCoefficient" bundle="${rb}"/></th>
                         <th><fmt:message key="label.actions" bundle="${rb}"/></th>
                     </tr>
                 </thead>
@@ -37,11 +38,12 @@
                                 <div class="rounded-image" style="background-image: url('img/user/${user.profilePhoto}');">
                                 </div>
                             </td>
-                            <td><p>${user.login}</p></td>
+                            <td><p><a href="/RatingServlet?requestType=userPage&userLogin=${user.login}">${user.login}</a></p></td>
                             <td><p>${user.email}</p></td>
                             <td><p>${user.name}</p></td>
                             <td><p>${user.sex}</p></td>
                             <td><p>${user.statusName}</p></td>
+                            <td><p>${user.statusCoefficient}</p></td>
                             <td>
                                 <a href="/RatingServlet?requestType=userStatusUp&login=${user.login}" class="btn btn-success" role="button">
                                     <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
